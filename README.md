@@ -2,8 +2,8 @@
 
 ## Kamula
 
-## Ryhmän numero: XX
+## Ryhmän numero: 45
 
-## Työn tekivät: Ahto Simakuutio ja Teemu Teekkari
+## Työn tekivät: Samuli Rahkonen ja Pekka Pennanen
 
 Työ testattu Node.js:n versiolla 0.10.22
