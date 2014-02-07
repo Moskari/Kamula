@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <% for (var i = 0; i < users.length; i++) { 
+    //this = users[i]; %>
+    <p><%= users[i]%></p>
+    
+    <% } %>
+    <a href="/users">Link to users</a>
+  </body>
+</html>
