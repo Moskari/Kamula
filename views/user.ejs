@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <!--<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>-->
+    <script type="text/javascript">
+
+      
+    $(document).ready(function() {
+      var form = $('#messageform');
+      var submit = $('#submit');
+        
+      form.on('submit', function(event) {
+          event.preventDefault();
+          
+          $.ajax({
+            type: "POST",
+            url: "<%= post_url %><%= title %>",
+            data: $('#msgfield').val()
+          }).done(function(data) {
+              alert('jee');
+          });
+          
+      });
+        
+    });
+    </script>
+        
+    
+    </head>
+    <body>
+    <h1><%= title %></h1>
+    <p><%= title %>'s page</p>
+    
+    <form id="messageform" action="" method="post">
+            What do you have to say:<br/>
+            <textarea id="msgfield" type="text" name="message"></textarea>
+            <button name="submit" type="submit" id="submit">Say it</button>
+    </form>
+    <div id="messages"></div>
+    <a href="/users">Link to users</a>
+    </body>
+</html>
