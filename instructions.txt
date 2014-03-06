@@ -1,0 +1,18 @@
+Asenna git
+
+Hommaa SSH-avaimet
+https://confluence.atlassian.com/display/BITBUCKET/How+to+install+a+public+key+on+your+Bitbucket+account
+
+
+Gitistä kamaa.
+git clone git@bitbucket.org:NIMIMERKKI/kamula.git
+
+Asenna node.js
+
+Luo ja yhdistä mongodb:hen
+C:\mongodb\bin\mongod.exe --dbpath "d:\test\mongo db data"
+C:\mongodb\bin\mongo.exe
+
+kamulan juuressa
+npm install mongoose
+
