@@ -10,6 +10,11 @@ var messages = require('./routes/messages');
 var http = require('http');
 var path = require('path');
 
+var mongoose = require('mongoose');
+
+var uri = 'mongodb://localhost/messages';
+//global.db = mongoose.createConnection(uri);
+mongoose.connect(uri);
 var app = express();
 
 // all environments

@@ -22,7 +22,8 @@
             url: "<%= post_url %><%= title %>",
             data: {message : $('#msgfield').val()}
           }).done(function(data) {
-		      $('#messages').append("<p>" + data.message + "</p>");
+		      //$('#messages').append("<p>" + data.message + "</p>");
+			  $('#messages').append("<p>" + JSON.stringify(data) + "</p>");
 		      //alert(JSON.stringify(data));
               //alert(JSON.parse(data).message);
           });
