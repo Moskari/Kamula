@@ -4,6 +4,10 @@
  */
 
 exports.add_message = function(req, res){
-  console.log('Got a post')
+  console.log(req.body.message);
+  console.log(JSON.stringify(req.body));
+  
+  res.send(req.body)
+  //res.send("message: " + req.body.message);
   //res.render('index', { title: 'Kamula' });
 };

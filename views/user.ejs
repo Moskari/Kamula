@@ -18,10 +18,13 @@
           
           $.ajax({
             type: "POST",
+			dataType: "json",
             url: "<%= post_url %><%= title %>",
-            data: $('#msgfield').val()
+            data: {message : $('#msgfield').val()}
           }).done(function(data) {
-              alert('jee');
+		      $('#messages').append("<p>" + data.message + "</p>");
+		      //alert(JSON.stringify(data));
+              //alert(JSON.parse(data).message);
           });
           
       });
