@@ -1,4 +1,4 @@
-Asenna git
+Asenna git bash
 
 Hommaa SSH-avaimet
 https://confluence.atlassian.com/display/BITBUCKET/How+to+install+a+public+key+on+your+Bitbucket+account
@@ -13,6 +13,6 @@ Luo ja yhdistä mongodb:hen
 C:\mongodb\bin\mongod.exe --dbpath "d:\test\mongo db data"
 C:\mongodb\bin\mongo.exe
 
-kamulan juuressa
+kamulan juuressa (ei ehkä tarpeen)
 npm install mongoose
 
