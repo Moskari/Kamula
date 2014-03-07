@@ -7,6 +7,10 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+	<% if (username) { %>
+	<p><%= username %> logged in</p>
+	<% } %>
     <a href="/users">Link to users</a>
+	<a href="/login">Log in</a>
   </body>
 </html>

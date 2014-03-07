@@ -1,4 +1,6 @@
 var Message = require('../models/message').Message;
+var mongoose = require('mongoose');
+var ObjectId = mongoose.Schema.ObjectId;
 /*
  * GET home page.
  */
@@ -18,6 +20,12 @@ exports.add_message = function(req, res){
   */
   var message = new Message();
   message.message = req.body.message;
+  //message.time = Date.now();
+  message.parent = null,
+  //message.time = Date,
+  //message.toWhom = ObjectId('1234'),
+  //message.fromWhom = ObjectId('12345')
+  
   message.save(function (err, m) {
     if (err) return console.error(err);
   });
@@ -25,7 +33,7 @@ exports.add_message = function(req, res){
   Message.findOne({}, function(err, docs) {
     if(!err) {
 	  console.log(docs);
-	  res.json(200, {message: docs.toJSON(docs)});
+	  res.json(200, docs.toJSON(docs));
 	} else {
 	  res.json(500, {message: "error"});
 	}
