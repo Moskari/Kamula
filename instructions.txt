@@ -16,3 +16,4 @@ C:\mongodb\bin\mongo.exe
 kamulan juuressa (ei ehkä tarpeen)
 npm install mongoose
 
+testi
