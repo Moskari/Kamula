@@ -8,6 +8,7 @@ var routes = require('./routes');
 var users = require('./routes/users');
 var messages = require('./routes/messages');
 var login = require('./routes/login');
+var register = require('./routes/register');
 var http = require('http');
 var path = require('path');
 
@@ -108,6 +109,9 @@ app.get('/', routes.index);
 app.post('/login', passport.authenticate('local',
          {successRedirect: '/', failureRedirect: '/login'}));
 app.get('/login', login.index);
+app.post('/register', passport.authenticate('local',
+         {successRedirect: '/', failureRedirect: '/register'}));
+app.get('/register', register.index);
 app.get('/logout', logout);
 app.get('/users', users.list);
 app.get('/users/:name', users.show_user);
