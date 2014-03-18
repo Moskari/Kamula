@@ -1,0 +1,12 @@
+pages that need implementing:
+
+1. register
+	-user name field
+	-password field
+	
+2. update your own information
+	-new password
+	-new user name
+	-new email
+	
+3. lots of other stuff
