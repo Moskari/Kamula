@@ -38,12 +38,13 @@
     <body>
     <h1><%= title %></h1>
     <p><%= title %>'s page</p>
-    
+    <% if (logged_user) { %>
     <form id="messageform" action="" method="post">
             What do you have to say:<br/>
             <textarea id="msgfield" type="text" name="message"></textarea>
             <button name="submit" type="submit" id="submit">Say it</button>
     </form>
+	<% } %>
     <div id="messages"></div>
     <a href="/users">Link to users</a>
     </body>

@@ -108,10 +108,13 @@ app.get('/', routes.index);
 app.post('/login', passport.authenticate('local',
          {successRedirect: '/', failureRedirect: '/login'}));
 app.get('/login', login.index);
-app.post('/logout', logout);
+app.get('/logout', logout);
 app.get('/users', users.list);
 app.get('/users/:name', users.show_user);
-app.post('/api/messages/users/:name', messages.add_message);
+
+app.post('/api/messages/users/:name', messages.api_add_message);
+app.post('/api/users/', users.api_register_user);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

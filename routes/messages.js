@@ -5,7 +5,7 @@ var ObjectId = mongoose.Schema.ObjectId;
  * GET home page.
  */
 
-exports.add_message = function(req, res){
+exports.api_add_message = function(req, res){
   console.log(req.body.message);
   console.log(JSON.stringify(req.body));
   /*
@@ -33,7 +33,7 @@ exports.add_message = function(req, res){
   Message.findOne({}, function(err, docs) {
     if(!err) {
 	  console.log(docs);
-	  res.json(200, docs.toJSON(docs));
+	  res.json(200, docs);
 	} else {
 	  res.json(500, {message: "error"});
 	}
