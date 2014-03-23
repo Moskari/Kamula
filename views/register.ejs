@@ -1,27 +1,57 @@
 <!doctype html>
-<head>
-    <title>Register</title>
-</head>
-<body>
-  <h3>Register</h3>
-  <form action="/register" method="post">
-    <div>
-      <label>Real name:</label>
-      <input type="text" name="name" maxlength=50/>
-    </div>
-	<div>
-      <label>User name:</label>
-      <input type="text" name="username" maxlength=30/>
-    </div>
-	<div>
-      <label>Email:</label>
-      <input type="text" name="email" maxlength=50/>
-    </div>
-	<div>
-      <label>Password:</label>
-      <input type="password" name="password" maxlength=50/>
-    </div><div>
-      <input type="submit" value="Submit"/>
-    </div>
-  </form>
-</body>
+<html>
+	<head>
+		<title>Register</title>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript">
+
+		  
+		$(document).ready(function() {
+		  var form = $('#registerform');
+		  var submit = $('#submit');
+			
+		  form.on('submit', function(event) {
+			  event.preventDefault();
+			  
+			  $.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "<%= post_url %>",
+				data: {user : $('#username').val(), name : $('#realname').val(), email : $('#email').val(), password : $('#password').val()}
+			  }).done(function(data) {
+				  //$('#messages').append("<p>" + data.message + "</p>");
+				  $('#messages').append("<p>" + JSON.stringify(data) + "</p>");
+				  //alert(JSON.stringify(data));
+				  //alert(JSON.parse(data).message);
+			  });
+			  
+		  });
+			
+		});
+		</script>
+			
+		</head>
+	<body>
+	  <h3>Register</h3>
+	  <form id="registerform" action="" method="post">
+		<div>
+		  <label>Real name:</label>
+		  <input type="text" name="name" id="realname" maxlength=50/>
+		</div>
+		<div>
+		  <label>User name:</label>
+		  <input type="text" name="username" id="username" maxlength=30/>
+		</div>
+		<div>
+		  <label>Email:</label>
+		  <input type="text" name="email" id="email" maxlength=50/>
+		</div>
+		<div>
+		  <label>Password:</label>
+		  <input type="password" name="password" id="password" maxlength=50/>
+		</div><div>
+		  <input type="submit" id="submit" value="Register"/>
+		</div>
+	  </form>
+	</body>
+</html>

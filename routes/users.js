@@ -19,6 +19,38 @@ exports.show_user = function(req, res){
 };
 
 exports.api_register_user = function(req, res) {
+  
   // Does nothing
-  res.send('Success');
+  var user = new User();
+  
+  User.findOne({user : req.body.user}, function(err, docs) {
+    if(!err && !docs) {
+	  console.log(docs);
+	  
+	  user.user = req.body.user;
+	  user.name = req.body.name;
+	  user.email = req.body.email;
+      user.password = req.body.password;
+  
+      user.save(function (err, m) {
+        if (!err) {
+		  console.error(err);
+		  res.json(201,{message: 'New user ' + user.user + ' registered'});
+		} else {
+		  res.json(500,{message: 'Problem with registering new user'});
+		}
+      });
+	  
+	  
+	  
+	} else if(!err) {
+	  res.json(403, {Location : '/api/users/'+req.body.user, message : 'Username exists!'});
+	} else {
+	  res.json(500, {message: "error"});
+	}
+  });
+  
+  
+  
+  //res.send('Success');
 }

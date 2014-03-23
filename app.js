@@ -21,7 +21,7 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 // Database
 var mongoose = require('mongoose');
 
-var uri = 'mongodb://localhost/messages';
+var uri = 'mongodb://localhost/kamula';
 //global.db = mongoose.createConnection(uri);
 mongoose.connect(uri);
 var app = express();
@@ -109,8 +109,7 @@ app.get('/', routes.index);
 app.post('/login', passport.authenticate('local',
          {successRedirect: '/', failureRedirect: '/login'}));
 app.get('/login', login.index);
-app.post('/register', passport.authenticate('local',
-         {successRedirect: '/', failureRedirect: '/register'}));
+//app.post('/register', );
 app.get('/register', register.index);
 app.get('/logout', logout);
 app.get('/users', users.list);
