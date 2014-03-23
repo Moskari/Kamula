@@ -3,6 +3,9 @@
  * Module dependencies.
  */
 
+var User = require('./models/user').User;
+var mongoose = require('mongoose');
+ 
 // Login-/autentikointikamaa
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -56,8 +59,19 @@ passport.deserializeUser(function(user, done) {
 
 
 function password_correct(username, password) {
-  return username==='antti' && password==='1234';
+  //var correct = false;
+  //User.findOne(username,'user password', function(err, docs) { // select user and password fields
+  
+  //  if(!err && docs) {
+  //    console.log(docs);
+  //    correct = docs.password === password;
+      return username==='antti' && password==='1234';
+  //  }
+  //});
+  //console.log(correct);
+  //return correct;
 }
+
 exports.password_correct = function(username, password) {
   return password_correct(username, password);
 };

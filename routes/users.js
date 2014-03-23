@@ -7,14 +7,14 @@ var mongoose = require('mongoose');
 exports.list = function(req, res){
   //res.send("respond with a resource");
   var users = new Array();
+  // Find all users and list them
   User.find({},'user', function(err, docs) { // select user fields
   if(!err && docs) {
 	for (var i = 0; i < docs.length; i++) {
 	  users.push(docs[i].user);
 	  console.log(docs[i].user);
-	  
 	}
-	// For some reason this has to be here so that users array has anything in it.
+	// For some reason this has to be here like this so that users array has anything in it.
 	res.render('users', {'title':'Users', 'users':users}); 
   } else {
     res.render('users', {'title':'Users', 'users':users});
@@ -59,8 +59,6 @@ exports.register_user = function(req, res) {
 		  res.render('register', { title: 'Register to Kamula',  message : msg });
 		}
       });
-	  
-	  
 	  
 	} else if(!err) {
 	  msg = 'Username exists';
