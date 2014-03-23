@@ -18,9 +18,51 @@ exports.show_user = function(req, res){
   res.render('user', {'title':name, 'post_url':'/api/messages/users/', logged_user:logged_user});
 };
 
+
+exports.register_user = function(req, res) {
+  var msg = '';
+  var user = new User();
+  
+  User.findOne({user : req.body.user}, function(err, docs) {
+    if(!err && !docs) {
+	  console.log(docs);
+	  
+	  user.user = req.body.user;
+	  user.name = req.body.name;
+	  user.email = req.body.email;
+      user.password = req.body.password;
+  
+      user.save(function (err, m) {
+        if (!err) {
+		  console.error(err);
+		  msg = 'Success';
+		  res.render('register', { title: 'Register to Kamula',  message : msg });
+		} else {
+		  msg = 'Problem with registering new user';
+		  res.render('register', { title: 'Register to Kamula',  message : msg });
+		}
+      });
+	  
+	  
+	  
+	} else if(!err) {
+	  msg = 'Username exists';
+	  console.error(msg);
+	  
+	  res.render('register', { title: 'Register to Kamula',  message : msg });
+	} else {
+	  msg = 'Error';
+	  res.render('register', { title: 'Register to Kamula',  message : msg });
+	}
+  });
+
+
+  
+  //res.render('register', { title: 'Register to Kamula', post_url: '/api/users/', message : msg });
+}
+
 exports.api_register_user = function(req, res) {
   
-  // Does nothing
   var user = new User();
   
   User.findOne({user : req.body.user}, function(err, docs) {

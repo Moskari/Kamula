@@ -2,38 +2,13 @@
 <html>
 	<head>
 		<title>Register</title>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		<script type="text/javascript">
 
-		  
-		$(document).ready(function() {
-		  var form = $('#registerform');
-		  var submit = $('#submit');
-			
-		  form.on('submit', function(event) {
-			  event.preventDefault();
-			  
-			  $.ajax({
-				type: "POST",
-				dataType: "json",
-				url: "<%= post_url %>",
-				data: {user : $('#username').val(), name : $('#realname').val(), email : $('#email').val(), password : $('#password').val()}
-			  }).done(function(data) {
-				  //$('#messages').append("<p>" + data.message + "</p>");
-				  $('#messages').append("<p>" + JSON.stringify(data) + "</p>");
-				  //alert(JSON.stringify(data));
-				  //alert(JSON.parse(data).message);
-			  });
-			  
-		  });
-			
-		});
-		</script>
-			
 		</head>
 	<body>
 	  <h3>Register</h3>
-	  <form id="registerform" action="" method="post">
+	  <p><a href="/">Home</a></p>
+	  <p><b><%= message %></b></p>
+	  <form id="registerform" action="/register" method="post">
 		<div>
 		  <label>Real name:</label>
 		  <input type="text" name="name" id="realname" maxlength=50/>

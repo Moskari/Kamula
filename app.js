@@ -13,10 +13,13 @@ var http = require('http');
 var path = require('path');
 
 // Login-/autentikointikamaa
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var BasicStrategy = require('passport-http').BasicStrategy;
-var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
+
+//var passport = require('passport');
+var authentication = require('./authentication');
+var passport = authentication.passport;
+//var LocalStrategy = require('passport-local').Strategy;
+//var BasicStrategy = require('passport-http').BasicStrategy;
+//var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
 // Database
 var mongoose = require('mongoose');
@@ -53,53 +56,6 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-//Autentikointi copypastaa
-
-// Lomakekirjautuminen
-passport.use(new LocalStrategy(
-  {
-    // Kenttien nimet HTML-lomakkeessa
-    usernameField: 'kayttaja',
-    passwordField: 'salasana'
-  },
-  function(username, password, done) {
-    if (salasanaOikein(username, password)) {
-      return done(null, username);
-    }
-    return done(null, false);
-  }
-));
-
-// HTTP Basic Auth
-passport.use(new BasicStrategy(
-  function(username, password, done) {
-    if (salasanaOikein(username, password)) {
-      return done(null, username);
-    }
-    return done(null, false);
-  }
-));
-
-// Serialisointi session-muuttujaksi
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-// Deserialisointi session-muuttujasta
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-function salasanaOikein(username, password) {
-  return username==='antti' && password==='1234';
-}
-
-
-function logout(req, res){
-  req.session.destroy(function (err) {
-    res.redirect('/');
-  });
-}
 
 // Copypaste loppuu
 
@@ -109,13 +65,13 @@ app.get('/', routes.index);
 app.post('/login', passport.authenticate('local',
          {successRedirect: '/', failureRedirect: '/login'}));
 app.get('/login', login.index);
-//app.post('/register', );
+app.post('/register', users.register_user);
 app.get('/register', register.index);
-app.get('/logout', logout);
+app.get('/logout', authentication.logout);
 app.get('/users', users.list);
 app.get('/users/:name', users.show_user);
 
-app.post('/api/messages/users/:name', messages.api_add_message);
+app.post('/api/messages/users/:name', passport.authenticate('basic', {session: false}),messages.api_add_message);
 app.post('/api/users/', users.api_register_user);
 
 
