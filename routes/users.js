@@ -6,7 +6,24 @@ var mongoose = require('mongoose');
 
 exports.list = function(req, res){
   //res.send("respond with a resource");
-  res.render('users', {'title':'Users', 'users':['monni','isomonni']});
+  var users = new Array();
+  User.find({},'user', function(err, docs) { // select user fields
+  if(!err && docs) {
+	for (var i = 0; i < docs.length; i++) {
+	  users.push(docs[i].user);
+	  console.log(docs[i].user);
+	  
+	}
+	// For some reason this has to be here so that users array has anything in it.
+	res.render('users', {'title':'Users', 'users':users}); 
+  } else {
+    res.render('users', {'title':'Users', 'users':users});
+  }
+  
+  });
+  console.log(users);
+  
+  //res.render('users', {'title':'Users', 'users':['monni','isomonni']});
 };
 
 exports.show_user = function(req, res){
@@ -27,7 +44,7 @@ exports.register_user = function(req, res) {
     if(!err && !docs) {
 	  console.log(docs);
 	  
-	  user.user = req.body.user;
+	  user.user = req.body.username;
 	  user.name = req.body.name;
 	  user.email = req.body.email;
       user.password = req.body.password;

@@ -57,7 +57,6 @@ if ('development' == app.get('env')) {
 }
 
 
-// Copypaste loppuu
 
 
 //ensureLoggedIn('/login')
@@ -71,8 +70,9 @@ app.get('/logout', authentication.logout);
 app.get('/users', users.list);
 app.get('/users/:name', users.show_user);
 
-app.post('/api/messages/users/:name', passport.authenticate('basic', {session: false}),messages.api_add_message);
-app.post('/api/users/', users.api_register_user);
+// Handlers for api
+app.post('/api/messages/users/:name', passport.authenticate('basic', {session: false}), messages.api_add_message);
+app.post('/api/users/', passport.authenticate('basic', {session: false}), users.api_register_user);
 
 
 http.createServer(app).listen(app.get('port'), function(){
