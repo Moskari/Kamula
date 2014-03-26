@@ -90,10 +90,10 @@ function api_add_message(req, res){
   //res.render('index', { title: 'Kamula' });
 }
   
- // curl localhost:3000/api/heroes
+ // curl localhost:3000/api/users
 function api_get_users(req, res) {
-  Hero.find({}, function(err, heroes) {
-    res.send(JSON.stringify(heroes));
+  User.find({}, function(err, users) {
+    res.send(JSON.stringify(users));
   });
 }
 
@@ -174,7 +174,7 @@ module.exports = function(authMiddleware) {
   app.post('/messages/users/:name', authMiddleware, api_add_message);
   app.post('/users/', authMiddleware, api_register_user);
   
-  app.get('/heroes', api_get_users);
+  app.get('/users', api_get_users);
   app.post('/heroes', heroesPost);
   app.get('/heroes/:heroid', heroGet);
   app.put('/heroes/:heroid', authMiddleware, heroPut);
