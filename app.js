@@ -12,6 +12,12 @@ var register = require('./routes/register');
 var http = require('http');
 var path = require('path');
 
+
+var mongoose = require('mongoose');
+
+var uri = 'mongodb://localhost/kamula';
+//global.db = mongoose.createConnection(uri);
+mongoose.connect(uri);
 // Login-/autentikointikamaa
 
 //var passport = require('passport');
@@ -22,11 +28,7 @@ var passport = authentication.passport;
 //var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
 // Database
-var mongoose = require('mongoose');
 
-var uri = 'mongodb://localhost/kamula';
-//global.db = mongoose.createConnection(uri);
-mongoose.connect(uri);
 var app = express();
 
 // all environments
@@ -56,8 +58,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-
-
+var restApi = require('./rest_api.js');
+app.use('/api/', restApi(authentication.check_api_authentication))
 
 //ensureLoggedIn('/login')
 app.get('/', routes.index);
@@ -71,8 +73,8 @@ app.get('/users', users.list);
 app.get('/users/:name', users.show_user);
 
 // Handlers for api
-app.post('/api/messages/users/:name', passport.authenticate('basic', {session: false}), messages.api_add_message);
-app.post('/api/users/', passport.authenticate('basic', {session: false}), users.api_register_user);
+//app.post('/api/messages/users/:name', passport.authenticate('basic', {session: false}), messages.api_add_message);
+//app.post('/api/users/', passport.authenticate('basic', {session: false}), users.api_register_user);
 
 
 http.createServer(app).listen(app.get('port'), function(){

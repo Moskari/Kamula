@@ -21,6 +21,30 @@ exports.passport = passport;
 
 //Autentikointi copypastaa
 
+var basicAuth = passport.authenticate('basic', {session: false});
+
+// Tarkistetaan autentikointi.
+// 1. Ensin katsotaan onko käyttäjä kirjautunut istuntoon (passport.session)
+// 2. Ellei, tarkistetaan oliko pyynnössä kelvolliset Basic Auth -tunnukset
+//
+// 1. vaihtoehto on tarkoitettu selaimelta tehtäville Ajax-pyynnöille, jotka
+// hyväksytään vain jos käyttäjä on kirjautunut sisään, eli req.user on jotain.
+// Tällöin pyyntöön ei tarvitse liittää Basic Auth -headereita mukaan.
+// Tämä tapa ei ole 100% restful, mutta jos istuntokirjautumista joka tapauksessa
+// käytetään, niin eiköhän tämä ole ok...
+//
+// Basic Auth sitten muita käyttötapauksia varten.
+exports.check_api_authentication = function(req, res, next) {
+  if (req.user) { // 1.
+    next();
+  }
+  else { // 2.
+    basicAuth(req, res, next);
+  }
+}
+
+
+
 // Lomakekirjautuminen
 passport.use(new LocalStrategy(
   {
