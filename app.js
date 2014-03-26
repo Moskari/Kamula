@@ -6,7 +6,6 @@
 var express = require('express');
 var routes = require('./routes');
 var users = require('./routes/users');
-var messages = require('./routes/messages');
 var login = require('./routes/login');
 var register = require('./routes/register');
 var http = require('http');
