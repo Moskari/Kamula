@@ -46,6 +46,7 @@ exports.check_api_authentication = function(req, res, next) {
 
 
 // Lomakekirjautuminen
+// Works with black magic
 passport.use(new LocalStrategy(
   {
     // Kenttien nimet HTML-lomakkeessa
@@ -53,21 +54,50 @@ passport.use(new LocalStrategy(
     passwordField: 'salasana'
   },
   function(username, password, done) {
-    if (password_correct(username, password)) {
-      return done(null, username);
-    }
-    return done(null, false);
+  
+    User.findOne(username,'user password', function(err, docs) { // select user and password fields
+  
+		if(!err && docs) {
+		  console.log(docs);
+		  if (docs.password === password)
+			return done(null, username);
+		  return done(null, false);
+		  //return username==='antti' && password==='1234';
+		}
+    });
+	 
+	 
+    //if (password_correct(username, password)) {
+    //  return done(null, username);
+    //}
+    //return done(null, false);
   }
 ));
 
+var options = {realm:"Kamula"};
 // HTTP Basic Auth
-passport.use(new BasicStrategy(
+passport.use(new BasicStrategy(options,
+function(username, password, done) {
+  
+    User.findOne(username,'user password', function(err, docs) { // select user and password fields
+  
+		if(!err && docs) {
+		  console.log(docs);
+		  if (docs.password === password)
+			return done(null, username);
+		  return done(null, false);
+		  //return username==='antti' && password==='1234';
+		}
+    });
+  }
+  /*
   function(username, password, done) {
     if (password_correct(username, password)) {
       return done(null, username);
     }
     return done(null, false);
   }
+  */
 ));
 
 // Serialisointi session-muuttujaksi
@@ -82,13 +112,14 @@ passport.deserializeUser(function(user, done) {
 
 
 
-function password_correct(username, password) {
+function password_correct(username, password, callback) {
   //var correct = false;
   //User.findOne(username,'user password', function(err, docs) { // select user and password fields
-  
+  //
   //  if(!err && docs) {
   //    console.log(docs);
   //    correct = docs.password === password;
+//	  callback(correct);
       return username==='antti' && password==='1234';
   //  }
   //});

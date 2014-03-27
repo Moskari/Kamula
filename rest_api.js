@@ -61,27 +61,37 @@ function api_add_message(req, res){
   })
   var Message = mongoose.model('Message', messageSchema);
   */
+  var data = req.body;
   var message = new Message();
-  message.message = req.body.message;
-  //message.time = Date.now();
-  //message.parent = null,
+  message.message = data.message;
+  message.type = data.type;
+  message.parent = data.parent;
   //message.time = Date,
-  //message.toWhom = ObjectId('1234'),
-  //message.fromWhom = ObjectId('12345')
+  if (data.type == "update")
+    message.toWhom = req.user;
+  else if (data.type == "comment")
+    message.toWhom = data.toWhom;
+  message.fromWhom = req.user;
   
   message.save(function (err, m) {
     if (err) return console.error(err);
+	
+	Message.findOne({_id : message._id}, function(err, docs) {
+		if(!err && docs) {
+		  console.log(docs);
+		  var r = docs.toObject();
+		  r.id = docs._id.toHexString();
+		  r.time = r.time.toTimeString();
+		  res.json(200, r);
+		} else {
+		  res.json(500, {message: "error"});
+		}
+
+	  });
+	
   });
   
-  Message.findOne({}, function(err, docs) {
-    if(!err) {
-	  console.log(docs);
-	  res.json(200, docs);
-	} else {
-	  res.json(500, {message: "error"});
-	}
-
-  });
+  
   
   //console.log(messages);
   //res.send(messages);
