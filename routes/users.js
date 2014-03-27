@@ -36,7 +36,7 @@ exports.show_user = function(req, res){
     update_access = true;
   
 
-  Message.find({fromWhom : name}).sort({time:-1}).select('message type fromWhom').exec(function(err, docs) {
+  Message.find({toWhom : name}).sort({time:-1}).select('message type fromWhom time').exec(function(err, docs) {
 		if(!err && docs) {
 		  console.log("Getting user messages:");
 		  console.log(docs);

@@ -16,32 +16,72 @@
       form.on('submit', function(event) {
           event.preventDefault();
           
-          $.ajax({
-            type: "POST",
-			dataType: "json",
-            url: "<%= post_url %><%= title %>",
-            data: {message : $('#msgfield').val(), type : "update", parent : "", toWhom : ""}
-          }).done(function(data) {
-		      //$('#messages').append("<p>" + data.message + "</p>");
-			  //$('#messages').append("<p>" + JSON.stringify(data) + "</p>");
-			  
-			  $('#messages').append(
-			    "<div id=\"" + data.id + "\" width=80%>" +
-	            "<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + data.time + " </p>" +
-				"<p>" + data.message + "</p>" +
-	    
-	            "<hr>" +
-	            "</div>"
-				);
-			  
-			  
-		      //alert(JSON.stringify(data));
-              //alert(JSON.parse(data).message);
-          });
+		  post_message('#msgfield','#messages', 'update', '');
+          
           
       });
         
     });
+	
+	$(function() {
+		$('.commentform').hide();
+		$(document).on('click', '.toggle', function(e) {
+		//$('.toggle').click(function(){
+			$('#'+$(this).attr('section')).slideToggle('fast');
+			return false;
+		});
+		//$('#about').show();
+	});
+	
+	function post_message(msgfield, messages_div, type, parent) {
+		$.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "<%= post_url %><%= title %>",
+				data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
+			  }).done(function(data) {
+				  //$('#messages').append("<p>" + data.message + "</p>");
+				  //$('#messages').append("<p>" + JSON.stringify(data) + "</p>");
+				  
+				var minutes = data.time.getMinutes();
+				var hour = data.time.getHours();
+				var date = data.time.getDate();
+				var month = data.time.getMonth();
+				var year = data.time.getFullYear();
+                var time = hour + ":" + minutes + " " + date + "-" + month + "-" + year;
+				  
+				  
+				$(messages_div).append(
+					"<div id=\"message_" + data.id + "\" width=80%>" +
+					"<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + time + " </p>" +
+					"<p>" + data.message + "</p>" +
+
+					"<hr>" +
+					"</div>"
+				);
+				  
+				  
+				  //alert(JSON.stringify(data));
+				  //alert(JSON.parse(data).message);
+			  });
+		}
+	
+	$(function() {
+	    
+        $(document).on('click', '.commentsubmit[type=submit]', function(e) {
+            var id = $(this).attr('id');
+			e.preventDefault();
+            /*  do work */
+			post_message('#msgfield' + '_' + id,'#message' + '_' + id, 'comment', id);
+        });
+    });
+	
+	//$(".commentsubmit").click(function(event){
+     //event.preventDefault();
+    // var id = this.id;
+	 // Submit 
+	// post_message('#msgfield' + '_' + id,'#message' + '_' + id);
+    //});
     </script>
         
     
@@ -50,17 +90,34 @@
     <h1><%= title %></h1>
     <p><%= title %>'s page</p>
     <% if (update_access) { %>
-    <form id="messageform" action="" method="post">
+    <form id="messageform" action="click" method="post">
             What do you have to say:<br/>
             <textarea id="msgfield" type="text" name="message"></textarea>
             <button name="submit" type="submit" id="submit">Say it</button>
     </form>
 	<% } %>
+	
+	<!-- Here comes all the messages -->
     <div id="messages">
 	<% for (var i = 0; i < messages.length; i++) { %>
-	<div id="" width=80%>
-	  <p><b>From:</b> <%= messages[i].fromWhom %> <b>Time:</b> <%=messages[i].time %></p>
+	  <div id="message_<%= messages[i].id %>" width=80%>
+	  <% 
+		var data = messages[i];
+		var minutes = data.time.getMinutes();
+		var hour = data.time.getHours();
+		var date = data.time.getDate();
+		var month = data.time.getMonth();
+		var year = data.time.getFullYear();
+		var time = hour + ":" + minutes + " " + date + "-" + month + "-" + year;%>
+	  <p>id: <%= messages[i].id %> <b>From:</b> <%= messages[i].fromWhom %> <b>Time:</b> <%=time %></p>
       <p> <%= messages[i].message %> </p>
+	  
+	  <form class="commentform" id="commentform_<%= messages[i].id %>" action="" method="post">
+            Comment:<br/>
+            <textarea id="msgfield_<%= messages[i].id %>" type="text" name="message"></textarea>
+            <button name="submit" class="commentsubmit" type="submit" id="<%= messages[i].id %>">Say it</button>
+      </form>
+	  <p><a href="" section="commentform_<%= messages[i].id %>" class="toggle">reply</a></p>
       <hr>
       </div>
 	<% } %>

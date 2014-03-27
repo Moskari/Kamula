@@ -6,8 +6,8 @@ var messageSchema = new Schema({
 	type : String,
 	parent: String, //Id to an update to which is replied. Used when message is a comment. "" when message is an user update
     time : { type: Date, default: Date.now },
-    toWhom: String, // Id is user's name. "" when message is sent to yourself as an update
-    fromWhom: String // Id is user's name. "" when message is sent to yourself as an update
+    toWhom: String, // Id is receiver's name. 
+    fromWhom: String // Id is sender's name. 
 });
       
 var message = mongoose.model('message', messageSchema);
