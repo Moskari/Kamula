@@ -22,7 +22,7 @@
       });
         
     });
-	
+	/*
 	$(function() {
 		$('.commentform').hide();
 		$(document).on('click', '.toggle', function(e) {
@@ -32,7 +32,7 @@
 		});
 		//$('#about').show();
 	});
-	
+	*/
 	function post_message(msgfield, messages_div, type, parent) {
 		$.ajax({
 				type: "POST",
@@ -40,27 +40,25 @@
 				url: "<%= post_url %><%= title %>",
 				data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
 			  }).done(function(data) {
-				  //$('#messages').append("<p>" + data.message + "</p>");
-				  //$('#messages').append("<p>" + JSON.stringify(data) + "</p>");
-				  
+			  /*
 				var minutes = data.time.getMinutes();
 				var hour = data.time.getHours();
 				var date = data.time.getDate();
 				var month = data.time.getMonth();
 				var year = data.time.getFullYear();
                 var time = hour + ":" + minutes + " " + date + "-" + month + "-" + year;
-				  
+				  */
 				  
 				$(messages_div).append(
 					"<div id=\"message_" + data.id + "\" width=80%>" +
-					"<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + time + " </p>" +
+					"<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + "time" + " </p>" +
 					"<p>" + data.message + "</p>" +
 
 					"<hr>" +
 					"</div>"
 				);
 				  
-				  
+				$("message_"+data.id).show();
 				  //alert(JSON.stringify(data));
 				  //alert(JSON.parse(data).message);
 			  });
@@ -71,8 +69,8 @@
         $(document).on('click', '.commentsubmit[type=submit]', function(e) {
             var id = $(this).attr('id');
 			e.preventDefault();
-            /*  do work */
-			post_message('#msgfield' + '_' + id,'#message' + '_' + id, 'comment', id);
+            
+			post_message('#msgfield' + '_' + id,'#messages', 'comment', id);
         });
     });
 	

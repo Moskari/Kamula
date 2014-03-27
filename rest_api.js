@@ -81,7 +81,7 @@ function api_add_message(req, res){
 		  console.log(docs);
 		  var r = docs.toObject();
 		  r.id = docs._id.toHexString(); // Not sure is this needed
-		  r.time = r.time.toTimeString();
+		  //r.time = r.time.toTimeString();
 		  res.json(200, r);
 		} else {
 		  res.json(500, {message: "error"});
