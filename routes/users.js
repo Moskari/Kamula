@@ -28,11 +28,12 @@ exports.list = function(req, res){
 
 exports.show_user = function(req, res){
   //res.send("respond with a resource");
-  // Temporarily always enabled
-  //var logged_user = req.user;
-  var logged_user = 'asdsadaasdad';
+  var update_access = false;
+  var logged_user = req.user;
   var name = req.param('name');
-  res.render('user', {'title':name, 'post_url':'/api/messages/users/', logged_user:logged_user});
+  if (logged_user === name)
+    update_access = true;
+  res.render('user', {'title':name, 'post_url':'/api/messages/users/', update_access:update_access});
 };
 
 
