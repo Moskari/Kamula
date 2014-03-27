@@ -1,4 +1,5 @@
 var User = require('../models/user').User;
+var Message = require('../models/message').Message;
 var mongoose = require('mongoose');
 /*
  * GET users listing.
@@ -33,7 +34,23 @@ exports.show_user = function(req, res){
   var name = req.param('name');
   if (logged_user === name)
     update_access = true;
-  res.render('user', {'title':name, 'post_url':'/api/messages/users/', update_access:update_access});
+  
+
+  Message.find({fromWhom : name}).sort({time:-1}).select('message type fromWhom').exec(function(err, docs) {
+		if(!err && docs) {
+		  console.log("Getting user messages:");
+		  console.log(docs);
+		  //for (var i = 0; i < docs.length; i++) {
+			  //if (docs[i].type == 'update')
+			    //console.log(docs[i].user);
+		  //}
+		  res.render('user', {title:name, post_url:'/api/messages/users/', update_access:update_access, messages:docs});
+		} else {
+		  res.render('user', {title:name, post_url:'/api/messages/users/', update_access:update_access, messages:new Array()});
+		}
+
+	  });
+
 };
 
 

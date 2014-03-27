@@ -80,7 +80,7 @@ function api_add_message(req, res){
 		if(!err && docs) {
 		  console.log(docs);
 		  var r = docs.toObject();
-		  r.id = docs._id.toHexString();
+		  r.id = docs._id.toHexString(); // Not sure is this needed
 		  r.time = r.time.toTimeString();
 		  res.json(200, r);
 		} else {

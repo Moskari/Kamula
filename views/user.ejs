@@ -20,10 +20,21 @@
             type: "POST",
 			dataType: "json",
             url: "<%= post_url %><%= title %>",
-            data: {message : $('#msgfield').val()}
+            data: {message : $('#msgfield').val(), type : "update", parent : "", toWhom : ""}
           }).done(function(data) {
 		      //$('#messages').append("<p>" + data.message + "</p>");
-			  $('#messages').append("<p>" + JSON.stringify(data) + "</p>");
+			  //$('#messages').append("<p>" + JSON.stringify(data) + "</p>");
+			  
+			  $('#messages').append(
+			    "<div id=\"" + data.id + "\" width=80%>" +
+	            "<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + data.time + " </p>" +
+				"<p>" + data.message + "</p>" +
+	    
+	            "<hr>" +
+	            "</div>"
+				);
+			  
+			  
 		      //alert(JSON.stringify(data));
               //alert(JSON.parse(data).message);
           });
@@ -38,14 +49,22 @@
     <body>
     <h1><%= title %></h1>
     <p><%= title %>'s page</p>
-    <% if (logged_user) { %>
+    <% if (update_access) { %>
     <form id="messageform" action="" method="post">
             What do you have to say:<br/>
             <textarea id="msgfield" type="text" name="message"></textarea>
             <button name="submit" type="submit" id="submit">Say it</button>
     </form>
 	<% } %>
-    <div id="messages"></div>
+    <div id="messages">
+	<% for (var i = 0; i < messages.length; i++) { %>
+	<div id="" width=80%>
+	  <p><b>From:</b> <%= messages[i].fromWhom %> <b>Time:</b> <%=messages[i].time %></p>
+      <p> <%= messages[i].message %> </p>
+      <hr>
+      </div>
+	<% } %>
+	</div>
     <a href="/users">Link to users</a>
     </body>
 </html>
