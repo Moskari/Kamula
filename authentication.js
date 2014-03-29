@@ -55,15 +55,16 @@ passport.use(new LocalStrategy(
   },
   function(username, password, done) {
   
-    User.findOne(username,'user password', function(err, docs) { // select user and password fields
-  
-		if(!err && docs) {
+    User.findOne({user : username},'user password', function(err, docs) { // select user and password fields
+		if (err) {return done(err);}
+		if(docs) {
 		  console.log(docs);
 		  if (docs.password === password)
 			return done(null, username);
 		  return done(null, false);
 		  //return username==='antti' && password==='1234';
-		}
+		} else
+			return done(null, false);
     });
 	 
 	 
