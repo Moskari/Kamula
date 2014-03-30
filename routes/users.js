@@ -8,6 +8,8 @@ var mongoose = require('mongoose');
 exports.list = function(req, res){
   //res.send("respond with a resource");
   var users = new Array();
+  var name = req.user;;
+
   // Find all users and list them
   User.find({},'user', function(err, docs) { // select user fields
   if(!err && docs) {
@@ -16,9 +18,9 @@ exports.list = function(req, res){
 	  console.log(docs[i].user);
 	}
 	// For some reason this has to be here like this so that users array has anything in it.
-	res.render('users', {'title':'Users', 'users':users}); 
+	res.render('users', {'title':'Users', 'users':users,username:name}); 
   } else {
-    res.render('users', {'title':'Users', 'users':users});
+    res.render('users', {'title':'Users', 'users':users,username:name});
   }
   
   });
