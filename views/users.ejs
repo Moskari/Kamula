@@ -3,6 +3,15 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+	<% if (username) { %>
+	<p><%= username %> is logged in</p>
+	<p><a href="/logout">Log out</a></p>
+	<% }
+	else{
+	%>
+	<p><a href="/login">Log in</a></p>
+	<%
+	}%>
   </head>
   <body>
     <h1><%= title %></h1>
