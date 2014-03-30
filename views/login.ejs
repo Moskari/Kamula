@@ -3,6 +3,10 @@
     <title>Login</title>
 </head>
 <body>
+	<% if (username) { %>
+	<p><%= username %> is already logged in</p>
+	<p><a href="/logout">Log out</a></p>
+	<% } %>
   <h3>Kirjaudu</h3>
   <form action="/login" method="post">
     <div>

@@ -5,6 +5,10 @@
 
 		</head>
 	<body>
+	  <% if (username) { %>
+	  <p><%= username %> is logged in</p>
+	  <p><a href="/logout">Log out</a></p>
+	  <% } %>
 	  <h3>Register</h3>
 	  <p><a href="/">Home</a></p>
 	  <p><b><%= message %></b></p>

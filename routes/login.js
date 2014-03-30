@@ -4,5 +4,6 @@
  */
 
 exports.index = function(req, res){
-  res.render('login', { title: 'Log in Kamula' });
+  var name = req.user;;
+  res.render('login', { title: 'Log in Kamula', username:name });
 };
