@@ -102,10 +102,58 @@ function api_add_message(req, res){
   
  // curl localhost:3000/api/users
 function api_get_users(req, res) {
-  User.find({}, function(err, users) {
-    res.send(JSON.stringify(users));
+  User.find({}, '-password', function(err, users) {
+    if (!err) {
+		res.send(201,JSON.stringify(users));
+	}
+	
   });
 }
+
+function api_get_user_messages(req, res) {
+
+  Message.find({type : 'update', fromWhom : req.param('name')}).sort({time:-1}).exec(function(err, messages) {
+	if(!err && messages) {
+		var m = new Array();
+
+		for (var i = 0; i < messages.length; i++) {
+			var r = messages[i].toObject();
+			r.id = messages[i]._id.toHexString();
+			m.push(r);
+		}
+		
+		
+		res.json(200, m);
+	} else {
+		res.json(404, {});
+	}
+  });
+}
+
+
+
+function api_get_comments(req, res) {
+  console.log("haloo??");
+  Message.find({type : 'comment', parent : req.param('msg_id')}).sort({time:-1}).exec(function(err, messages) {
+	console.log(err);
+	console.log(messages);
+	if(!err && messages) {
+		var m = new Array();
+
+		for (var i = 0; i < messages.length; i++) {
+			var r = messages[i].toObject();
+			r.id = messages[i]._id.toHexString();
+			m.push(r);
+		}
+		
+		
+		res.json(200, m);
+	} else {
+		res.json(404, {});
+	}
+  });
+}
+
 
 // curl -H 'Content-Type: application/json' -X POST -d '{"heroid": "spiderman", "name": "Spider Man", "city": "New York"}' localhost:3000/api/heroes
 function heroesPost(req, res) {
@@ -183,6 +231,8 @@ module.exports = function(authMiddleware) {
 
   app.post('/messages/users/:name', authMiddleware, api_add_message);
   app.post('/users/', authMiddleware, api_register_user);
+  app.get('/updates/users/:name', authMiddleware, api_get_user_messages);
+  app.get('/comments/:msg_id', authMiddleware, api_get_comments);
   
   app.get('/users', api_get_users);
   app.post('/heroes', heroesPost);

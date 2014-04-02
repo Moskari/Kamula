@@ -4,19 +4,23 @@
     
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+	<style>
+	.message { position:relative; width:97%; float:right;}
+	#messages { position:relative;}
+	</style>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <!--<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>-->
     <script type="text/javascript">
 
       
     $(document).ready(function() {
-      var form = $('#messageform');
-      var submit = $('#submit');
+		var form = $('#messageform');
+		get_updates();
         
-      form.on('submit', function(event) {
-          event.preventDefault();
+		form.on('submit', function(event) {
+			event.preventDefault();
           
-		  post_message('#msgfield','#messages', 'update', '');
+			post_message('#msgfield','#messages', 'update', '');
           
           
       });
@@ -33,6 +37,66 @@
 		//$('#about').show();
 	});
 
+	function get_updates() {
+		$.ajax({
+					type: "GET",
+					dataType: "json",
+					url: "/api/updates/users/<%= title %>",
+					//data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
+				  }).done(function(data) {
+					for (var i = 0; i < data.length; i++) {
+						$("#messages").append(new_message(data[i].message, data[i].id, data[i].fromWhom, data[i].time));
+						$("#commentform_"+data[i].id).hide();
+						get_comments(data[i].id);
+					}
+					
+				  });
+	}
+	
+	function get_comments(parent_id) {
+		$.ajax({
+					type: "GET",
+					dataType: "json",
+					url: "/api/comments/" + parent_id,
+					//data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
+				  }).done(function(data) {
+					for (var i = 0; i < data.length; i++) {
+						$("#message_" + parent_id).append(new_message(data[i].message, data[i].id, data[i].fromWhom, data[i].time));
+						$("#commentform_"+data[i].id).hide();
+						get_comments(data[i].id);
+					}
+					
+				  });
+	}
+	
+	function new_message(message, id, fromWhom, time) {
+		/*
+		var data = messages[i];
+		var minutes = data.time.getMinutes();
+		var hour = data.time.getHours();
+		var date = data.time.getDate();
+		var month = data.time.getMonth();
+		var year = data.time.getFullYear();
+		var time = hour + ":" + minutes + " " + date + "-" + month + "-" + year;%>
+		*/
+		return "" +
+		"<div id=\"message_" + id + "\" class=\"message\" >" + 
+
+		"<p>id: " + id + " <b>From:</b>" + fromWhom + "<b>Time:</b>" + time + "</p>" +
+		"<p>" + message + "</p>" +
+
+		"<form class=\"commentform\" id=\"commentform_" + id + "\" action=\"\" method=\"post\">" +
+			"Comment:<br/>" +
+			"<textarea id=\"msgfield_" + id + "\" type=\"text\" name=\"message\"></textarea>" +
+			"<button name=\"submit\" class=\"commentsubmit\" type=\"submit\" id=\"" + id + "\">Say it</button>" + 
+		"</form>" + 
+		"<p><a href=\"\" section=\"commentform_" + id  + "\" class=\"toggle\">reply</a></p>" +
+		"<hr>" +
+		"</div>"; 
+	
+	}
+	
+	
 	function post_message(msgfield, messages_div, type, parent) {
 		$.ajax({
 				type: "POST",
@@ -50,15 +114,22 @@
 				  */
 				  
 				$(messages_div).append(
-					"<div id=\"message_" + data.id + "\" width=80%>" +
-					"<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + "time" + " </p>" +
-					"<p>" + data.message + "</p>" +
+					//"<div class=\"message\" id=\"message_" + data.id + "\" >" +
+					//"<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + "time" + " </p>" +
+					//"<p>" + data.message + "</p>" +
 
-					"<hr>" +
-					"</div>"
+					//"<hr>" +
+					//"</div>"
+					
+					new_message(data.message, data.id, data.fromWhom, "nothing")
+					
+					
+					
+					
 				);
 				  
-				$("message_"+data.id).show();
+				//$("message_"+data.id).show();
+				$("#commentform_" + data.id).hide();
 				  //alert(JSON.stringify(data));
 				  //alert(JSON.parse(data).message);
 			  });
@@ -70,7 +141,7 @@
             var id = $(this).attr('id');
 			e.preventDefault();
             
-			post_message('#msgfield' + '_' + id,'#messages', 'comment', id);
+			post_message('#msgfield' + '_' + id,'#message_' + id, 'comment', id);
         });
     });
 	
@@ -97,8 +168,9 @@
 	
 	<!-- Here comes all the messages -->
     <div id="messages">
+	<!--
 	<% for (var i = 0; i < messages.length; i++) { %>
-	  <div id="message_<%= messages[i].id %>" width=80%>
+	  <div id="message_<%= messages[i].id %>" class="message" width=80%>
 	  <% 
 		var data = messages[i];
 		var minutes = data.time.getMinutes();
@@ -119,7 +191,7 @@
       <hr>
       </div>
 	<% } %>
-	</div>
+	</div> -->
     <a href="/users">Link to users</a>
     </body>
 </html>
