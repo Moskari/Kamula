@@ -5,7 +5,8 @@
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
 	<style>
-	.message { position:relative; width:97%; float:right;}
+	.message { position:relative; width:97%; float:right; }
+	.msg_content {background-color:#b0c4de;}
 	#messages { position:relative;}
 	</style>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -81,10 +82,10 @@
 		*/
 		return "" +
 		"<div id=\"message_" + id + "\" class=\"message\" >" + 
-
+		"<div class=\"msg_content\">" +
 		"<p>id: " + id + " <b>From:</b>" + fromWhom + "<b>Time:</b>" + time + "</p>" +
 		"<p>" + message + "</p>" +
-
+		
 		"<form class=\"commentform\" id=\"commentform_" + id + "\" action=\"\" method=\"post\">" +
 			"Comment:<br/>" +
 			"<textarea id=\"msgfield_" + id + "\" type=\"text\" name=\"message\"></textarea>" +
@@ -92,6 +93,7 @@
 		"</form>" + 
 		"<p><a href=\"\" section=\"commentform_" + id  + "\" class=\"toggle\">reply</a></p>" +
 		"<hr>" +
+		"</div>" + 
 		"</div>"; 
 	
 	}

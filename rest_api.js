@@ -133,10 +133,7 @@ function api_get_user_messages(req, res) {
 
 
 function api_get_comments(req, res) {
-  console.log("haloo??");
   Message.find({type : 'comment', parent : req.param('msg_id')}).sort({time:-1}).exec(function(err, messages) {
-	console.log(err);
-	console.log(messages);
 	if(!err && messages) {
 		var m = new Array();
 
