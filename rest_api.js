@@ -228,8 +228,8 @@ module.exports = function(authMiddleware) {
 
   app.post('/messages/users/:name', authMiddleware, api_add_message);
   app.post('/users/', authMiddleware, api_register_user);
-  app.get('/updates/users/:name', authMiddleware, api_get_user_messages);
-  app.get('/comments/:msg_id', authMiddleware, api_get_comments);
+  app.get('/updates/users/:name', api_get_user_messages);
+  app.get('/comments/:msg_id', api_get_comments);
   
   app.get('/users', api_get_users);
   app.post('/heroes', heroesPost);
