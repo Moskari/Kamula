@@ -59,7 +59,7 @@ exports.show_user = function(req, res){
 exports.register_user = function(req, res) {
   var msg = '';
   var user = new User();
-  
+  var name = req.user;
   User.findOne({user : req.body.user}, function(err, docs) {
     if(!err && !docs) {
 	  console.log(docs);
@@ -73,10 +73,10 @@ exports.register_user = function(req, res) {
         if (!err) {
 		  console.error(err);
 		  msg = 'Success';
-		  res.render('register', { title: 'Register to Kamula',  message : msg });
+		  res.render('register', { title: 'Register to Kamula',  message : msg, username:name });
 		} else {
 		  msg = 'Problem with registering new user';
-		  res.render('register', { title: 'Register to Kamula',  message : msg });
+		  res.render('register', { title: 'Register to Kamula',  message : msg, username:name });
 		}
       });
 	  
@@ -84,10 +84,10 @@ exports.register_user = function(req, res) {
 	  msg = 'Username exists';
 	  console.error(msg);
 	  
-	  res.render('register', { title: 'Register to Kamula',  message : msg });
+	  res.render('register', { title: 'Register to Kamula',  message : msg, username:name });
 	} else {
 	  msg = 'Error';
-	  res.render('register', { title: 'Register to Kamula',  message : msg });
+	  res.render('register', { title: 'Register to Kamula',  message : msg, username:name });
 	}
   });
 
