@@ -16,6 +16,7 @@
 	<a href="/register">Register</a>
 	
 	<% if (username) { %>
+		<h2><a href="/users">Link to users</a></h2>
 		<h2>All your friends:</h2>
 		<% for (var i = 0; i < users.length; i++) {  %>
 			<p><a href="users/<%=users[i]%>"><%=users[i]%></a></p>

@@ -10,9 +10,20 @@ exports.list = function(req, res){
   var users = new Array();
   var name = req.user;;
   var query_params = {};
-  if (name)
-    query_params = {user : name}
-  
+  if (name) {
+	User.findOne({user : name},'friends', function(err, doc) { // select user fields
+    if(!err && doc) {
+	  for (var i = 0; i < doc.friends; i++) {
+	    users.push(doc.friends[i]);
+	    console.log(doc.friends[i]);
+	  }
+  }
+	// For some reason this has to be here like this so that users array has anything in it.  
+    res.render('index', {'title':'Kamula', 'users':users,username:name});
+  });
+	
+	
+  } else {
   // Find all users and list them
   User.find({},'user', function(err, docs) { // select user fields
   if(!err && docs) {
@@ -20,16 +31,14 @@ exports.list = function(req, res){
 	  users.push(docs[i].user);
 	  console.log(docs[i].user);
 	}
-	// For some reason this has to be here like this so that users array has anything in it.
-	res.render('index', {'title':'Kamula', 'users':users,username:name}); 
-  } else {
-    res.render('index', {'title':'Kamula', 'users':users,username:name});
   }
-  
+	// For some reason this has to be here like this so that users array has anything in it.  
+    res.render('index', {'title':'Kamula', 'users':users,username:name});
   });
   console.log(users);
   
   //res.render('users', {'title':'Users', 'users':['monni','isomonni']});
+  }
 };
  
  
