@@ -17,7 +17,7 @@
     <h1><%= title %></h1>
     <% for (var i = 0; i < users.length; i++) { 
     //this = users[i]; %>
-    <p><a href="users/<%=users[i]%>"><%=users[i]%></a></p>
+    <p><a href="users/<%=users[i]%>"><%=users[i]%></a> <a href="/add_friend/<%= users[i]%>">Add as a friend</a></p>
     
     <% } %>
     <a href="/users">Link to users</a>

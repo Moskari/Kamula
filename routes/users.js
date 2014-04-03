@@ -68,6 +68,7 @@ exports.register_user = function(req, res) {
 	  user.name = req.body.name;
 	  user.email = req.body.email;
       user.password = req.body.password;
+	  user.friends = new Array();
   
       user.save(function (err, m) {
         if (!err) {

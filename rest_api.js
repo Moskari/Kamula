@@ -28,7 +28,8 @@ function api_register_user(req, res) {
 	  user.name = req.body.name;
 	  user.email = req.body.email;
       user.password = req.body.password;
-  
+      user.friends = new Array();
+	  
       user.save(function (err, m) {
         if (!err) {
 		  console.error(err);

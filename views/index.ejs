@@ -14,5 +14,17 @@
     <a href="/users">Link to users</a>
 	<a href="/login">Log in</a> 
 	<a href="/register">Register</a>
+	
+	<% if (username) { %>
+		<h2>All your friends:</h2>
+		<% for (var i = 0; i < users.length; i++) {  %>
+			<p><a href="users/<%=users[i]%>"><%=users[i]%></a></p>
+		<% } %>
+	<% } else { %>
+		<h2>All registered users:</h2>
+		<% for (var i = 0; i < users.length; i++) {  %>
+			<p><a href="users/<%=users[i]%>"><%=users[i]%></a></p>
+		<% } %>
+	<% } %>
   </body>
 </html>

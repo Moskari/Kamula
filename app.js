@@ -61,7 +61,7 @@ var restApi = require('./rest_api.js');
 app.use('/api/', restApi(authentication.check_api_authentication))
 
 //ensureLoggedIn('/login')
-app.get('/', routes.index);
+app.get('/', routes.list);
 app.post('/login', passport.authenticate('local',
          {successRedirect: '/', failureRedirect: '/login'}));
 app.get('/login', login.index);
