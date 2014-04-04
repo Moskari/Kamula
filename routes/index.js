@@ -8,19 +8,20 @@ var mongoose = require('mongoose');
 exports.list = function(req, res){
   //res.send("respond with a resource");
   var users = new Array();
-  var name = req.user;;
-  var query_params = {};
+  var name = req.user;
   if (name) {
 	User.findOne({user : name},'friends', function(err, doc) { // select user fields
+	console.log(err);
+	console.log(doc);
     if(!err && doc) {
-	  for (var i = 0; i < doc.friends; i++) {
+	  for (var i = 0; i < doc.friends.length; i++) {
 	    users.push(doc.friends[i]);
 	    console.log(doc.friends[i]);
 	  }
-  }
+    }
 	// For some reason this has to be here like this so that users array has anything in it.  
-    res.render('index', {'title':'Kamula', 'users':users,username:name});
-  });
+    res.render('index', {'title':'Kamula', 'users':users, username:name});
+    });
 	
 	
   } else {
@@ -33,7 +34,7 @@ exports.list = function(req, res){
 	}
   }
 	// For some reason this has to be here like this so that users array has anything in it.  
-    res.render('index', {'title':'Kamula', 'users':users,username:name});
+    res.render('index', {'title':'Kamula', 'users':users, username:name});
   });
   console.log(users);
   

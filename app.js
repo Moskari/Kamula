@@ -70,6 +70,7 @@ app.get('/register', register.index);
 app.get('/logout', authentication.logout);
 app.get('/users', users.list);
 app.get('/users/:name', users.show_user);
+app.post('/add_friend/:name', users.add_friend)
 
 // Handlers for api
 //app.post('/api/messages/users/:name', passport.authenticate('basic', {session: false}), messages.api_add_message);

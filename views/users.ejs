@@ -17,7 +17,14 @@
     <h1><%= title %></h1>
     <% for (var i = 0; i < users.length; i++) { 
     //this = users[i]; %>
-    <p><a href="users/<%=users[i]%>"><%=users[i]%></a> <a href="/add_friend/<%= users[i]%>">Add as a friend</a></p>
+    <p>
+	<a href="users/<%=users[i]%>"><%=users[i]%></a> 
+	<% if (username && username !== users[i] && !(user_friends.indexOf(users[i]) >= 0)) { %>
+	<form action="/add_friend/<%=users[i]%>" method="post">
+	<input type="submit" id="submit" value="Make friends"/>
+	</form>
+	<% } %>
+	</p>
     
     <% } %>
     <a href="/users">Link to users</a>
