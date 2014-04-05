@@ -29,6 +29,7 @@ function api_register_user(req, res) {
 	  user.email = req.body.email;
       user.password = req.body.password;
       user.friends = new Array();
+	  user.active = true;
 	  
       user.save(function (err, m) {
         if (!err) {
@@ -39,10 +40,10 @@ function api_register_user(req, res) {
 		}
       });
 	  
-	  
-	  
 	} else if(!err) {
-	  res.json(403, {Location : '/api/users/'+req.body.user, message : 'Username exists!'});
+	  res.setHeader('Location', '/api/users/'+req.body.user);
+	  //res.json(403, {Location : '/api/users/'+req.body.user, message : 'Username exists!'});
+	  res.json(403, {message : 'Username exists!'});
 	} else {
 	  res.json(500, {message: "error"});
 	}
@@ -104,12 +105,24 @@ function api_add_message(req, res){
  // curl localhost:3000/api/users
 function api_get_users(req, res) {
   User.find({}, '-password', function(err, users) {
-    if (!err) {
-		res.send(201,JSON.stringify(users));
+    if (!err && users) {
+	  res.send(201,JSON.stringify(users));
 	}
 	
   });
 }
+
+//TODO:
+function api_get_user(req, res) {
+  var user = req.param('name');
+  User.find({user : user}, '-password', function(err, users) {
+    if (!err && users) {
+	  res.send(JSON.stringify(users));
+	} else
+		res.status(404).send(JSON.stringify({message : 'User ' + user + ' not found'}))
+  });
+}
+
 
 function api_get_user_messages(req, res) {
 
@@ -126,7 +139,7 @@ function api_get_user_messages(req, res) {
 		
 		res.json(200, m);
 	} else {
-		res.json(404, {});
+		res.json(404, {message : "Couldn't get updates for user " + req.param('name')});
 	}
   });
 }
@@ -147,7 +160,7 @@ function api_get_comments(req, res) {
 		
 		res.json(200, m);
 	} else {
-		res.json(404, {});
+		res.json(404, {message : "Couldn't get comments for message " + req.param('msg_id')});
 	}
   });
 }
@@ -233,6 +246,7 @@ module.exports = function(authMiddleware) {
   app.get('/comments/:msg_id', api_get_comments);
   
   app.get('/users', api_get_users);
+  app.get('/users/:name', api_get_user);
   app.post('/heroes', heroesPost);
   app.get('/heroes/:heroid', heroGet);
   app.put('/heroes/:heroid', authMiddleware, heroPut);
