@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Settings</title>
+
+		</head>
+	<body>
+	  <% if (username) { %>
+		<p><%= username %> is logged in</p>
+		<p><a href="/logout">Log out</a></p>
+		<% }
+		else{
+		%>
+		<p><a href="/login">Log in</a></p>
+		<%
+    }%>
+	  <h3>Change user information</h3>
+	  <p><a href="/">Home</a></p>
+	  <p><b><%= message %></b></p>
+	  <form id="settingsform" action="/settings" method="post">
+		<div>
+		  <label>Real name:</label>
+		  <input type="text" name="name"  maxlength=50 value="joo jee joo"/>
+		</div>
+		<div>
+		  <label>User name:</label>
+		  <input type="text" name="username"  maxlength=30/>
+		</div>
+		<div>
+		  <label>Email:</label>
+		  <input type="text" name="email"  maxlength=50/>
+		</div>
+		<div>
+		  <label>Password:</label>
+		  <input type="password" name="password"  maxlength=50/>
+		</div><div>
+		  <input type="submit" id="submit" value="Register"/>
+		</div>
+	  </form>
+	</body>
+</html>

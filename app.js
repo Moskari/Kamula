@@ -8,6 +8,7 @@ var routes = require('./routes');
 var users = require('./routes/users');
 var login = require('./routes/login');
 var register = require('./routes/register');
+var settings = require('./routes/settings');
 var http = require('http');
 var path = require('path');
 
@@ -24,7 +25,7 @@ var authentication = require('./authentication');
 var passport = authentication.passport;
 //var LocalStrategy = require('passport-local').Strategy;
 //var BasicStrategy = require('passport-http').BasicStrategy;
-//var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
 // Database
 
@@ -70,7 +71,8 @@ app.get('/register', register.index);
 app.get('/logout', authentication.logout);
 app.get('/users', users.list);
 app.get('/users/:name', users.show_user);
-app.post('/add_friend/:name', users.add_friend)
+app.post('/add_friend/:name', ensureLoggedIn('/login'), users.add_friend);
+app.get('/settings', ensureLoggedIn('/login'), settings.show_settings);
 
 // Handlers for api
 //app.post('/api/messages/users/:name', passport.authenticate('basic', {session: false}), messages.api_add_message);

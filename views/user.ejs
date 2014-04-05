@@ -39,6 +39,7 @@
 	});
 
 	function get_updates() {
+		$('#messages').html(''); // Remove everything
 		$.ajax({
 					type: "GET",
 					dataType: "json",
@@ -114,8 +115,8 @@
 				var year = data.time.getFullYear();
                 var time = hour + ":" + minutes + " " + date + "-" + month + "-" + year;
 				  */
-				  
-				$(messages_div).append(
+				get_updates();
+				//$(messages_div).append(
 					//"<div class=\"message\" id=\"message_" + data.id + "\" >" +
 					//"<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + "time" + " </p>" +
 					//"<p>" + data.message + "</p>" +
@@ -123,12 +124,12 @@
 					//"<hr>" +
 					//"</div>"
 					
-					new_message(data.message, data.id, data.fromWhom, "nothing")
+				//	new_message(data.message, data.id, data.fromWhom, "nothing")
 					
 					
 					
 					
-				);
+				//);
 				  
 				//$("message_"+data.id).show();
 				$("#commentform_" + data.id).hide();
