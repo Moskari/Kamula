@@ -1,9 +1,57 @@
 <!doctype html>
+
+
 <html>
 	<head>
 		<title>Settings</title>
 
-		</head>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript">
+
+      
+    $(document).ready(function() {
+		var form = $('#settingsform');
+		get_logged_user_data();
+        
+		form.on('submit', function(event) {
+			event.preventDefault();
+			post_user_data();
+      });
+        
+    });
+	
+	
+	function post_user_data() {
+		$.ajax({
+			type: "PUT",
+			dataType: "json",
+			url: "/api/users/<%= username %>",
+			data: {name : $('input[name="name"]').val(), email : $('input[name="email"]').val(), password : $('input[name="password"]').val()}
+		  }).done(function(data) {
+			$('#messages').append('<p>' + data.message + '</p>');
+		});
+	}
+	
+	
+	function get_logged_user_data() {
+		$.ajax({
+			type: "GET",
+			dataType: "json",
+			url: "/api/users/<%= username %>"
+			//data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
+		  }).done(function(data) {
+			$('input[name="name"]').val(data.name);
+			$('input[name="email"]').val(data.email);
+			//$('input[name="name"]').val(data.name);
+			//$('input[name="name"]').val(data.name);
+			
+		  });
+	
+	}
+	
+</script>
+		
+	</head>
 	<body>
 	  <% if (username) { %>
 		<p><%= username %> is logged in</p>
@@ -16,25 +64,21 @@
     }%>
 	  <h3>Change user information</h3>
 	  <p><a href="/">Home</a></p>
-	  <p><b><%= message %></b></p>
+	  <div id="messages"><p><%= message %></p></div>
 	  <form id="settingsform" action="/settings" method="post">
 		<div>
 		  <label>Real name:</label>
-		  <input type="text" name="name"  maxlength=50 value="joo jee joo"/>
-		</div>
-		<div>
-		  <label>User name:</label>
-		  <input type="text" name="username"  maxlength=30/>
+		  <input type="text" name="name"  maxlength=50 value=""/>
 		</div>
 		<div>
 		  <label>Email:</label>
-		  <input type="text" name="email"  maxlength=50/>
+		  <input type="text" name="email"  maxlength=50 value=""/>
 		</div>
 		<div>
 		  <label>Password:</label>
 		  <input type="password" name="password"  maxlength=50/>
 		</div><div>
-		  <input type="submit" id="submit" value="Register"/>
+		  <input type="submit" id="submit" value="Change"/>
 		</div>
 	  </form>
 	</body>

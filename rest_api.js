@@ -49,6 +49,49 @@ function api_register_user(req, res) {
 	}
   });
 }
+
+var funcs = require('./functions');
+
+function api_change_user(req, res) {
+  username = req.param('user');
+  
+  User.findOne({user : username}, function(err, user) {
+    if(!err && !user) {
+		res.json(404,{message: 'User ' + username + 'does not exist.'});
+	}
+	
+	authentication_middleware(req, res, function() {
+		console.log(req.user + ' ' + username)
+		if (req.user != username) {
+			res.json(403, {message : 'You don\'t have the rights to change this profile.'});
+		} else {
+		  console.log(docs);
+		  var length = 30;
+		  if (!funcs.check_string_length(req.body.name, length)) {
+			res.json(500, {message: 'Too long name.'});
+		  }
+		  user.name = req.body.name;
+		  user.email = req.body.email;
+		  user.friends = req.body.friends;
+		  if (req.body.password) {
+			user.password = req.body.password;
+		  }
+		  
+		  
+		  user.save(function (err, m) {
+			if (!err) {
+			  console.error(err);
+			  res.json(200,{message: 'User ' + user.user + ' information changed succesfully'});
+			} else {
+			  res.json(500,{message: 'Problem with changing user profile.'});
+			}
+		  });
+		  
+		} 
+	});
+  });
+}
+
   
 function api_add_message(req, res){
   console.log(req.body.message);
@@ -115,9 +158,9 @@ function api_get_users(req, res) {
 //TODO:
 function api_get_user(req, res) {
   var user = req.param('name');
-  User.find({user : user}, '-password', function(err, users) {
+  User.findOne({user : user}, '-password', function(err, users) {
     if (!err && users) {
-	  res.send(JSON.stringify(users));
+	  res.json(users);
 	} else
 		res.status(404).send(JSON.stringify({message : 'User ' + user + ' not found'}))
   });
@@ -227,11 +270,12 @@ function heroPut(req, res) {
   });
 }
 
+var authentication_middleware;
 
 // Vaaditaan autorisointi PUT:lle ja DELETE:lle.
 // Autorisointi tarkistetaan authMiddleware:lla.
 module.exports = function(authMiddleware) {
-
+  authentication_middleware = authMiddleware;
   var app = express();
 
   // Kaikki API:n vastaukset ovat json-tyyppiä
@@ -247,6 +291,9 @@ module.exports = function(authMiddleware) {
   
   app.get('/users', api_get_users);
   app.get('/users/:name', api_get_user);
+  app.put('/users/:name', authMiddleware, api_change_user);
+  
+  
   app.post('/heroes', heroesPost);
   app.get('/heroes/:heroid', heroGet);
   app.put('/heroes/:heroid', authMiddleware, heroPut);
