@@ -53,7 +53,7 @@ function api_register_user(req, res) {
 var funcs = require('./functions');
 
 function api_change_user(req, res) {
-  username = req.param('user');
+  var username = req.param('name');
   
   User.findOne({user : username}, function(err, user) {
     if(!err && !user) {
@@ -65,7 +65,6 @@ function api_change_user(req, res) {
 		if (req.user != username) {
 			res.json(403, {message : 'You don\'t have the rights to change this profile.'});
 		} else {
-		  console.log(docs);
 		  var length = 30;
 		  if (!funcs.check_string_length(req.body.name, length)) {
 			res.json(500, {message: 'Too long name.'});
