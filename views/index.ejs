@@ -3,6 +3,52 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			get_updates();
+		});
+	
+	
+		function get_updates() {
+			$('#messages').html(''); // Remove everything
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				url: "/api/updates/"+"newest",
+				}).done(function(data) {
+					for (var i = 0; i < data.length; i++) {
+						$("#messages").append(new_message(data[i].message, data[i].id, data[i].fromWhom, data[i].time));
+						$("#commentform_"+data[i].id).hide();
+					}
+
+				});
+		}
+	
+		function new_message(message, id, fromWhom, time) {
+			return "" +
+			"<div id=\"message_" + id + "\" class=\"message\" >" + 
+			"<div class=\"msg_content\">" +
+			"<p>id: " + id + " <b>From:</b>" + fromWhom + "<b>Time:</b>" + time + "</p>" +
+			"<p>" + message + "</p>" +
+			
+			"<form class=\"commentform\" id=\"commentform_" + id + "\" action=\"\" method=\"post\">" +
+				"Comment:<br/>" +
+				"<textarea id=\"msgfield_" + id + "\" type=\"text\" name=\"message\"></textarea>" +
+				"<button name=\"submit\" class=\"commentsubmit\" type=\"submit\" id=\"" + id + "\">Say it</button>" + 
+			"</form>" + 
+			"<p><a href=\"\" section=\"commentform_" + id  + "\" class=\"toggle\">reply</a></p>" +
+			"<hr>" +
+			"</div>" + 
+			"</div>"; 
+	
+		}
+	
+	
+	
+	
+	</script>
+	
   </head>
   <body>
     <h1><%= title %></h1>
@@ -15,6 +61,8 @@
     <a href="/users">Link to users</a>
 	<a href="/login">Log in</a> 
 	<a href="/register">Register</a>
+	
+	<div id="messages"></div>
 	
 	<% if (username) { %>
 		<h2><a href="/users">Link to users</a></h2>
