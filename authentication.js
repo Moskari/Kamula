@@ -80,7 +80,7 @@ var options = {realm:"Kamula"};
 passport.use(new BasicStrategy(options,
 function(username, password, done) {
   
-    User.findOne(username,'user password', function(err, docs) { // select user and password fields
+    User.findOne({user : username},'user password', function(err, docs) { // select user and password fields
   
 		if(!err && docs) {
 		  console.log(docs);
