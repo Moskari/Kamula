@@ -268,8 +268,8 @@ function api_get_newest_messages(req, res) {
 
 function api_get_newest_friend_messages(req, res) {
   var username = req.user;
-  if (!username) {
-    
+  if (username !== req.param('name')) {
+    res.json(403, {message : 'User ' + username + ' doesnt have rights.'});
   }
   
   User.findOne({user : username}, 'friends', function(err, user) {
@@ -292,7 +292,7 @@ function api_get_newest_friend_messages(req, res) {
 		});
 		  
 	} else
-		res.status(404).send(JSON.stringify({message : 'User ' + user + ' not found'}))
+		res.json(404, {message : 'User ' + username + ' not found'});
   });
   
   
@@ -342,7 +342,7 @@ module.exports = function(authMiddleware) {
   app.post('/messages/users/:name', authMiddleware, api_add_message);
   app.post('/users/', authMiddleware, api_register_user);
   app.get('/updates/users/:name', api_get_user_messages);
-  app.get('/updates/users/:name/friends', api_get_newest_friend_messages);
+  app.get('/updates/users/:name/friends', authMiddleware, api_get_newest_friend_messages);
   app.get('/updates/users/', api_get_newest_messages);
   app.get('/comments/:msg_id', api_get_comments);
   
