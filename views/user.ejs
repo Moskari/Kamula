@@ -84,7 +84,7 @@
 		return "" +
 		"<div id=\"message_" + id + "\" class=\"message\" >" + 
 		"<div class=\"msg_content\">" +
-		"<p>id: " + id + " <b>From:</b>" + fromWhom + "<b>Time:</b>" + time + "</p>" +
+		"<p>id: " + id + " <b>From: </b>" + fromWhom + "<b> Time: </b>" + time + "</p>" +
 		"<p>" + message + "</p>" +
 		
 		"<form class=\"commentform\" id=\"commentform_" + id + "\" action=\"\" method=\"post\">" +
@@ -107,34 +107,8 @@
 				url: "<%= post_url %><%= title %>",
 				data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
 			  }).done(function(data) {
-			  /*
-				var minutes = data.time.getMinutes();
-				var hour = data.time.getHours();
-				var date = data.time.getDate();
-				var month = data.time.getMonth();
-				var year = data.time.getFullYear();
-                var time = hour + ":" + minutes + " " + date + "-" + month + "-" + year;
-				  */
 				get_updates();
-				//$(messages_div).append(
-					//"<div class=\"message\" id=\"message_" + data.id + "\" >" +
-					//"<p><b>From:</b> " + data.fromWhom + " <b>Time:</b> " + "time" + " </p>" +
-					//"<p>" + data.message + "</p>" +
-
-					//"<hr>" +
-					//"</div>"
-					
-				//	new_message(data.message, data.id, data.fromWhom, "nothing")
-					
-					
-					
-					
-				//);
-				  
-				//$("message_"+data.id).show();
 				$("#commentform_" + data.id).hide();
-				  //alert(JSON.stringify(data));
-				  //alert(JSON.parse(data).message);
 			  });
 		}
 	
@@ -161,6 +135,13 @@
     <body>
     <h1><%= title %></h1>
     <p><%= title %>'s page</p>
+	<p><a href="/">Home</a></p>
+	<% if (username) { %>
+	<p><%= username %> is logged in</p>
+	<p><a href="/logout">Log out</a></p>
+	<p><a href="/settings">Change user settings.</a></p>
+	<% } %>
+	
     <% if (update_access) { %>
     <form id="messageform" action="click" method="post">
             What do you have to say:<br/>
