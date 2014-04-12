@@ -1,21 +1,22 @@
+/* This is the REST api for Kamula */
 
 var express = require('express');
-
-//var Hero = require('./models.js').Hero;
-
-//var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost/test');
 
 var User = require('./models/user').User;
 var Message = require('./models/message').Message;
 var mongoose = require('mongoose');
 
+var funcs = require('./functions'); // Useful functions
 
 var db = mongoose.connection;
 db.once('open', function() {
   console.log("Connected to mongodb");
 });
 
+
+/* 
+POST /api/users/ {user : "D4RT_V4D3R", name : "Petteri", email : "aaasd@asddd.asd", password : "111"} 
+*/
 function api_register_user(req, res) {
   
   var user = new User();
@@ -50,18 +51,22 @@ function api_register_user(req, res) {
   });
 }
 
-var funcs = require('./functions');
 
+
+/* 
+PUT /api/users/:name {name : "Petteri", email : "asd@asd.asd", password : "aaa"} 
+*/
 function api_change_user(req, res) {
   var username = req.param('name');
-  
+  console.log(req.body.name);
   User.findOne({user : username}, function(err, user) {
     if(!err && !user) {
 		res.json(404,{message: 'User ' + username + 'does not exist.'});
 	}
 	
 	authentication_middleware(req, res, function() {
-		console.log(req.user + ' ' + username)
+		console.log(req.user + ' ' + username);
+		
 		if (req.user != username) {
 			res.json(403, {message : 'You don\'t have the rights to change this profile.'});
 		} else {
@@ -71,7 +76,7 @@ function api_change_user(req, res) {
 		  }
 		  user.name = req.body.name;
 		  user.email = req.body.email;
-		  user.friends = req.body.friends;
+		  //user.friends = req.body.friends;
 		  if (req.body.password) {
 			user.password = req.body.password;
 		  }
@@ -91,20 +96,47 @@ function api_change_user(req, res) {
   });
 }
 
-  
+/* 
+DELETE /api/users/:name 
+*/
+function api_delete_user(req, res) {
+  var username = req.param('name');
+  console.log(req.body.name);
+  User.findOne({user : username}, function(err, user) {
+    if(!err && !user) {
+		res.json(404,{message: 'User ' + username + 'does not exist.'});
+	}
+	
+	authentication_middleware(req, res, function() {
+		console.log(req.user + ' ' + username);
+		
+		if (req.user != username) {
+			res.json(403, {message : 'You don\'t have the rights to delete this profile.'});
+		} else {
+
+		  user.active = false;		  
+		  
+		  user.save(function (err, m) {
+			if (!err) {
+			  console.error(err);
+			  res.json(200,{message: 'User ' + user.user + ' deleted succesfully'});
+			} else {
+			  res.json(500,{message: 'Problem with deleting user profile.'});
+			}
+		  });
+		  
+		} 
+	});
+  });
+}
+
+/* 
+POST /api/users/:name {name : "Petteri", email : "asd@asd.asd", password : "aaa"} 
+*/
 function api_add_message(req, res){
   console.log(req.body.message);
   console.log(JSON.stringify(req.body));
-  /*
-  var mongoose = require('mongoose');
-  var Schema = mongoose.Schema;
-  var messageSchema = new Schema({
-    message: String
-	//toWhom: ObjectId,
-	//fromWhom: ObjectId
-  })
-  var Message = mongoose.model('Message', messageSchema);
-  */
+
   var data = req.body;
   var message = new Message();
   message.message = data.message;
@@ -135,16 +167,12 @@ function api_add_message(req, res){
 	
   });
   
-  
-  
-  //console.log(messages);
-  //res.send(messages);
-  //res.send(req.body);
-  //res.send("message: " + req.body.message);
-  //res.render('index', { title: 'Kamula' });
 }
   
  // curl localhost:3000/api/users
+/*
+GET /api/users/
+*/
 function api_get_users(req, res) {
   User.find({}, '-password', function(err, users) {
     if (!err && users) {
@@ -154,18 +182,30 @@ function api_get_users(req, res) {
   });
 }
 
-//TODO:
+/*
+GET /api/users/:name
+*/
 function api_get_user(req, res) {
   var user = req.param('name');
   User.findOne({user : user}, '-password', function(err, users) {
     if (!err && users) {
+	  console.log(users);
 	  res.json(users);
 	} else
 		res.status(404).send(JSON.stringify({message : 'User ' + user + ' not found'}))
   });
 }
-
-
+/*
+POST /messages/users/:name 
+{
+    message : String,
+	type : String,  // "update" or "comment"
+	parent: String, //Id to an update to which is replied. Used when message is a comment. "" when message is an user update
+    time : { type: Date, default: Date.now },
+    toWhom: String, // Id is receiver's name. 
+    fromWhom: String // Id is sender's name. 
+}
+*/
 function api_get_user_messages(req, res) {
 
   Message.find({type : 'update', fromWhom : req.param('name')}).sort({time:-1}).exec(function(err, messages) {
@@ -177,8 +217,6 @@ function api_get_user_messages(req, res) {
 			r.id = messages[i]._id.toHexString();
 			m.push(r);
 		}
-		
-		
 		res.json(200, m);
 	} else {
 		res.json(404, {message : "Couldn't get updates for user " + req.param('name')});
@@ -187,7 +225,9 @@ function api_get_user_messages(req, res) {
 }
 
 
-
+/*
+Gets comments for given message id.
+*/
 function api_get_comments(req, res) {
   Message.find({type : 'comment', parent : req.param('msg_id')}).sort({time:-1}).exec(function(err, messages) {
 	if(!err && messages) {
@@ -208,66 +248,6 @@ function api_get_comments(req, res) {
 }
 
 
-// curl -H 'Content-Type: application/json' -X POST -d '{"heroid": "spiderman", "name": "Spider Man", "city": "New York"}' localhost:3000/api/heroes
-function heroesPost(req, res) {
-  var hero = new Hero(req.body);
-  hero.save(function(err, savedHero) {
-    if (!err) {
-      res.setHeader('Location', '/api/heroes/'+savedHero.heroid);
-      res.status(201).send(JSON.stringify(savedHero));
-    }
-    else {
-      res.status(403).send(JSON.stringify({err:err}));
-    }
-  });
-}
-
- // curl localhost:3000/api/heroes/spiderman
-function heroGet(req, res) {
-  var heroid = req.param('heroid');
-  Hero.findOne({heroid:heroid}, function(err, hero) {
-    if (hero) {
-      res.send(JSON.stringify(hero));
-    }
-    else {
-      res.status(404).send(JSON.stringify({err:"Not found"}));
-    }
-  });
-}
-
-// curl -u 'antti:1234' -X DELETE localhost:3000/api/heroes/spiderman
-function heroDelete(req, res) {
-  // Nykyisessä toteutuksessa kuka vain voi tehdä mitä vain, kunhan on autentikoitunut.
-  // Monasti olisi kiva vielä rajoittaa tätä niin, että vain itsensä saa poistaa/muokata.
-  // esim. if(heroid!==req.user) { res.status(403).send(...
-  // Samoin PUT:ssa...
-
-  var heroid = req.param('heroid');
-  Hero.findOneAndRemove({heroid:heroid}, function(err, hero) {
-    if (hero) {
-      res.send(JSON.stringify(hero));
-    }
-    else {
-      res.status(404).send();
-    }
-  });
-}
-
-// curl -u 'antti:1234' -H 'Content-Type: application/json' -X PUT -d '{"heroid": "hulk", "name": "Hulk", "city": "Ohio"}' localhost:3000/api/heroes/hulk
-function heroPut(req, res) {
-  var heroid = req.param('heroid');
-  if (heroid!==req.body.heroid) {
-      res.status(409).send(JSON.stringify({err:heroid+" != "+req.body.heroid}));
-  }
-  Hero.findOneAndUpdate({heroid:heroid}, req.body, {upsert:true}, function(err, hero) {
-    if (!err) {
-      res.send(JSON.stringify(hero));
-    }
-    else {
-      res.status(500).send(JSON.stringify({err:err}));
-    }
-  });
-}
 
 var authentication_middleware;
 
@@ -291,13 +271,13 @@ module.exports = function(authMiddleware) {
   app.get('/users', api_get_users);
   app.get('/users/:name', api_get_user);
   app.put('/users/:name', authMiddleware, api_change_user);
-  
-  
+  app.delete('/users/:name', authMiddleware, api_delete_user);
+  /*
   app.post('/heroes', heroesPost);
   app.get('/heroes/:heroid', heroGet);
   app.put('/heroes/:heroid', authMiddleware, heroPut);
   app.delete('/heroes/:heroid', authMiddleware, heroDelete);
-
+  */
   return app;
 };
 
