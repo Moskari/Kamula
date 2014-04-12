@@ -176,8 +176,11 @@ GET /api/users/
 function api_get_users(req, res) {
   User.find({}, '-password', function(err, users) {
     if (!err && users) {
-	  res.send(201,JSON.stringify(users));
-	}
+	  res.send(201, users);
+	} else {
+	  res.send(500, {message : "Error"});
+	} 
+
 	
   });
 }
@@ -190,9 +193,10 @@ function api_get_user(req, res) {
   User.findOne({user : user}, '-password', function(err, users) {
     if (!err && users) {
 	  console.log(users);
-	  res.json(users);
+	  res.json(200, users);
 	} else
-		res.status(404).send(JSON.stringify({message : 'User ' + user + ' not found'}))
+		//res.status(404).send(JSON.stringify({message : 'User ' + user + ' not found'}))
+		res.json(404, {message : 'User ' + user + ' not found'});
   });
 }
 /*
@@ -223,6 +227,58 @@ function api_get_user_messages(req, res) {
 	}
   });
 }
+
+function api_get_newest_messages(req, res) {
+
+  Message.find({type : 'update'}).sort({time:-1}).limit(5).exec(function(err, messages) {
+	if(!err && messages) {
+		var m = new Array();
+
+		for (var i = 0; i < messages.length; i++) {
+			var r = messages[i].toObject();
+			r.id = messages[i]._id.toHexString();
+			m.push(r);
+		}
+		res.json(200, m);
+	} else {
+		res.json(404, {message : "Couldn't get newest updates" });
+	}
+  });
+}
+
+function api_get_newest_friend_messages(req, res) {
+  var username = req.user;
+  if (!username) {
+    
+  }
+  
+  User.findOne({user : username}, 'friends', function(err, user) {
+	if (!err && user) {
+		console.log(user.friends);
+		  
+		Message.find({type : 'update', fromWhom : {$in : user.friends}}).sort({time:-1}).limit(5).exec(function(err, messages) {
+			if(!err && messages) {
+				var m = new Array();
+
+				for (var i = 0; i < messages.length; i++) {
+				var r = messages[i].toObject();
+				r.id = messages[i]._id.toHexString();
+				m.push(r);
+				}
+				res.json(200, m);
+			} else {
+				res.json(404, {message : "Couldn't get friend updates for user " + req.param('name')});
+			}
+		});
+		  
+	} else
+		res.status(404).send(JSON.stringify({message : 'User ' + user + ' not found'}))
+  });
+  
+  
+
+}
+
 
 
 /*
@@ -266,6 +322,8 @@ module.exports = function(authMiddleware) {
   app.post('/messages/users/:name', authMiddleware, api_add_message);
   app.post('/users/', authMiddleware, api_register_user);
   app.get('/updates/users/:name', api_get_user_messages);
+  app.get('/updates/users/:name/friends', api_get_newest_friend_messages);
+  app.get('/updates/users/', api_get_newest_messages);
   app.get('/comments/:msg_id', api_get_comments);
   
   app.get('/users', api_get_users);

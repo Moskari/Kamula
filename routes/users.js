@@ -62,9 +62,9 @@ exports.show_user = function(req, res){
 			  //if (docs[i].type == 'update')
 			    //console.log(docs[i].user);
 		  //}
-		  res.render('user', {title:name, post_url:'/api/messages/users/', update_access:update_access, messages:docs});
+		  res.render('user', {title:name, username : logged_user, post_url:'/api/messages/users/', update_access:update_access, messages:docs});
 		} else {
-		  res.render('user', {title:name, post_url:'/api/messages/users/', update_access:update_access, messages:new Array()});
+		  res.render('user', {title:name, username : logged_user, post_url:'/api/messages/users/', update_access:update_access, messages:new Array()});
 		}
 
 	  });

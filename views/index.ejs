@@ -7,6 +7,7 @@
 	<script>
 		$(document).ready(function() {
 			get_updates();
+			setInterval(get_updates, 10000); // Get newest updates every 10 seconds
 		});
 	
 	
@@ -15,7 +16,11 @@
 			$.ajax({
 				type: "GET",
 				dataType: "json",
-				url: "/api/updates/"+"newest",
+				<% if (username) {%>
+				url: "/api/updates/users/<%=username%>/friends",
+				<% } else { %>
+				url: "/api/updates/users/",
+				<% } %>
 				}).done(function(data) {
 					for (var i = 0; i < data.length; i++) {
 						$("#messages").append(new_message(data[i].message, data[i].id, data[i].fromWhom, data[i].time));
@@ -29,7 +34,7 @@
 			return "" +
 			"<div id=\"message_" + id + "\" class=\"message\" >" + 
 			"<div class=\"msg_content\">" +
-			"<p>id: " + id + " <b>From:</b>" + fromWhom + "<b>Time:</b>" + time + "</p>" +
+			"<p>id: " + id + " <b>From: </b>" + fromWhom + "<b> Time: </b>" + time + "</p>" +
 			"<p>" + message + "</p>" +
 			
 			"<form class=\"commentform\" id=\"commentform_" + id + "\" action=\"\" method=\"post\">" +
@@ -55,6 +60,7 @@
     <p>Welcome to <%= title %></p>
 	<% if (username) { %>
 	<p><%= username %> is logged in</p>
+	<p><a href="/users/<%=username%>"><%=username%>'s profile</p>
 	<p><a href="/logout">Log out</a></p>
 	<p><a href="/settings">Change user settings.</a></p>
 	<% } %>
