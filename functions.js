@@ -11,7 +11,7 @@ var Message = require('./models/message').Message;
 var mongoose = require('mongoose');
 
 exports.check_string_length = function(string, length) {
-	return string.length <= length;
+	return (string.length <= length && string.length > 0);
 }
 
 exports.check_string_chars = function(string) {

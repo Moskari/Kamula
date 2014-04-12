@@ -63,11 +63,11 @@
 	<p><a href="/users/<%=username%>"><%=username%>'s profile</p>
 	<p><a href="/logout">Log out</a></p>
 	<p><a href="/settings">Change user settings.</a></p>
+	<% } else {%>
+	<a href="/login">Log in</a> 
 	<% } %>
     <a href="/users">Link to users</a>
-	<a href="/login">Log in</a> 
 	<a href="/register">Register</a>
-	
 	<div id="messages"></div>
 	
 	<% if (username) { %>

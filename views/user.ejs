@@ -152,30 +152,8 @@
 	
 	<!-- Here comes all the messages -->
     <div id="messages">
-	<!--
-	<% for (var i = 0; i < messages.length; i++) { %>
-	  <div id="message_<%= messages[i].id %>" class="message" width=80%>
-	  <% 
-		var data = messages[i];
-		var minutes = data.time.getMinutes();
-		var hour = data.time.getHours();
-		var date = data.time.getDate();
-		var month = data.time.getMonth();
-		var year = data.time.getFullYear();
-		var time = hour + ":" + minutes + " " + date + "-" + month + "-" + year;%>
-	  <p>id: <%= messages[i].id %> <b>From:</b> <%= messages[i].fromWhom %> <b>Time:</b> <%=time %></p>
-      <p> <%= messages[i].message %> </p>
-	  
-	  <form class="commentform" id="commentform_<%= messages[i].id %>" action="" method="post">
-            Comment:<br/>
-            <textarea id="msgfield_<%= messages[i].id %>" type="text" name="message"></textarea>
-            <button name="submit" class="commentsubmit" type="submit" id="<%= messages[i].id %>">Say it</button>
-      </form>
-	  <p><a href="" section="commentform_<%= messages[i].id %>" class="toggle">reply</a></p>
-      <hr>
-      </div>
-	<% } %>
-	</div> -->
+
+	</div>
     <a href="/users">Link to users</a>
     </body>
 </html>

@@ -24,23 +24,39 @@ db.once('open', function() {
 POST /api/users/ {user : "D4RT_V4D3R", name : "Petteri", email : "aaasd@asddd.asd", password : "111"} 
 */
 function api_register_user(req, res) {
-  
+  var msg = "";
   var user = new User();
   
   User.findOne({user : req.body.user}, function(err, docs) {
     if(!err && !docs) {
 	  console.log(docs);
+	  if (!funcs.check_string_chars(req.body.username) || !funcs.check_string_length(req.body.username, 99999)) {
+	    msg = 'Bad username! ';
+	  }
+	  user.user = req.body.username;
 	  
-	  user.user = req.body.user;
+      if (!funcs.check_string_length(req.body.name, 30)) {
+	    msg = msg + 'Bad name! ';
+	  }
 	  user.name = req.body.name;
-	  user.email = req.body.email;
-      user.password = req.body.password;
-      user.friends = new Array();
-	  user.active = true;
 	  
+      if (!req.body.email) {
+	    msg = msg + 'Bad email! ';
+	  }	  
+	  user.email = req.body.email;
+	  
+	  if (req.body.password) {
+		user.password = req.body.password;
+	  }
+	  user.friends = new Array();
+	  user.active = true; // Make user active (not deleted)
+	  if (msg) {
+	    res.json(400, { message : msg});
+	  }
       user.save(function (err, m) {
         if (!err) {
 		  console.error(err);
+		  res.setHeader('Location', '/api/users/'+req.body.user);
 		  res.json(201,{message: 'New user ' + user.user + ' registered'});
 		} else {
 		  res.json(500,{message: 'Problem with registering new user'});
@@ -48,8 +64,6 @@ function api_register_user(req, res) {
       });
 	  
 	} else if(!err) {
-	  res.setHeader('Location', '/api/users/'+req.body.user);
-	  //res.json(403, {Location : '/api/users/'+req.body.user, message : 'Username exists!'});
 	  res.json(403, {message : 'Username exists!'});
 	} else {
 	  res.json(500, {message: "error"});

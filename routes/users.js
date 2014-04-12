@@ -8,7 +8,7 @@ var User = require('../models/user').User;
 var Message = require('../models/message').Message;
 var mongoose = require('mongoose');
 
-
+/* Renders users page. */
 exports.list = function(req, res){
   //res.send("respond with a resource");
   var users = new Array();
@@ -45,36 +45,21 @@ exports.list = function(req, res){
   
   });
   console.log(users);
-  
-  //res.render('users', {'title':'Users', 'users':['monni','isomonni']});
 };
 
+/* Shows user profile. Depending on if the user is logged in or not, message form is shown to the user. */
 exports.show_user = function(req, res){
-  //res.send("respond with a resource");
-  var update_access = false;
+  
   var logged_user = req.user;
   var name = req.param('name');
+  var update_access = false;
   if (logged_user === name)
     update_access = true;
   
-
-  Message.find({toWhom : name}).sort({time:-1}).select('message type fromWhom time').exec(function(err, docs) {
-		if(!err && docs) {
-		  console.log("Getting user messages:");
-		  console.log(docs);
-		  //for (var i = 0; i < docs.length; i++) {
-			  //if (docs[i].type == 'update')
-			    //console.log(docs[i].user);
-		  //}
-		  res.render('user', {title:name, username : logged_user, post_url:'/api/messages/users/', update_access:update_access, messages:docs});
-		} else {
-		  res.render('user', {title:name, username : logged_user, post_url:'/api/messages/users/', update_access:update_access, messages:new Array()});
-		}
-
-	  });
-
+  res.render('user', {title:name, username : logged_user, post_url:'/api/messages/users/', update_access:update_access});
 };
 
+/* POST method that adds user a friend and then adds user as a friend's friend. */
 exports.add_friend = function(req,res) {
   var user = req.user;
   var friend = req.param('name');
@@ -132,7 +117,9 @@ exports.add_friend = function(req,res) {
     res.redirect('/users');
 }
 
+var funcs = require('../functions');
 
+/* Registers a new user. Takes information from a form.*/
 exports.register_user = function(req, res) {
   var msg = '';
   var user = new User();
@@ -141,13 +128,29 @@ exports.register_user = function(req, res) {
     if(!err && !docs) {
 	  console.log(docs);
 	  
+	  if (!funcs.check_string_chars(req.body.username) || !funcs.check_string_length(req.body.username, 99999)) {
+	    msg = 'Bad username! ';
+	  }
 	  user.user = req.body.username;
+	  
+      if (!funcs.check_string_length(req.body.name, 30)) {
+	    msg = msg + 'Bad name! ';
+	  }
 	  user.name = req.body.name;
+	  
+      if (!req.body.email) {
+	    msg = msg + 'Bad email! ';
+	  }	  
 	  user.email = req.body.email;
+	  if (!req.body.password) {
+	    msg = msg + 'Bad password! ';
+	  }	  
       user.password = req.body.password;
 	  user.friends = new Array();
-	  user.active = true;
-  
+	  user.active = true; // Make user active (not deleted)
+	  if (msg) {
+	    res.render('register', { title: 'Register to Kamula',  message : msg, username:name });
+	  }
       user.save(function (err, m) {
         if (!err) {
 		  console.error(err);
