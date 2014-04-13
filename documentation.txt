@@ -1,5 +1,5 @@
 POST    /api/messages/users/:name         Adds a new message for an user, Requires authentication.
-POST    /api/users/                       Adds a new user, user info in JSON form. Requires authentication.
+POST    /api/users/                       Adds a new user, user info in JSON form.
 GET     /api/updates/users/:name          Gets the messages of a specific user, returned in JSON.
 GET     /api/updates/users/:name/friends  Gets the messages of a user's friends, returned in JSON. Requires authentication.
 GET     /api/updates/users/               Gets 5 newest messages of all users, messages returned in JSON.

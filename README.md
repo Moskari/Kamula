@@ -8,4 +8,4 @@
 
 Työ testattu Node.js:n versiolla 0.10.22
 
-# test
+Käytetään MongoDB:n default porttia (27017), joten sen ei pitäisi vaatia säätämistä.
