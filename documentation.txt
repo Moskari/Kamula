@@ -1,0 +1,11 @@
+Registering a new user
+  When registering a new user client sends the registering information in JSON form.
+  If there is an error in registering information, return 400
+  If username already exists, return 403
+  If registering fails, return 500
+  If registering succeeds, return 201 and set location-field to refer to the newly created user.
+  
+Changing user information
+  x
+  y
+  z
