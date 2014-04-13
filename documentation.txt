@@ -1,11 +1,33 @@
+POST    /api/messages/users/:name         Adds a new message for an user, Requires authentication.
+POST    /api/users/                       Adds a new user, user info in JSON form. Requires authentication.
+GET     /api/updates/users/:name          Gets the messages of a specific user, returned in JSON.
+GET     /api/updates/users/:name/friends  Gets the messages of a user's friends, returned in JSON. Requires authentication.
+GET     /api/updates/users/               Gets 5 newest messages of all users, messages returned in JSON.
+GET     /api/comments/:msg_id             Gets comments for a message that has "msg_id" as id, returned in JSON.
+GET     /api/users                        Gets users, all users returned in JSON.
+GET     /api/users/:name                  Gets info of a user, user is returned in JSON.
+PUT     /api/users/:name                  Updates the info of a user, info in JSON form. Requires authentication.
+DELETE  /api/users/:name                  Deletes a user. Requires authentication.
+
+
 Registering a new user
   When registering a new user client sends the registering information in JSON form.
   If there is an error in registering information, return 400
-  If username already exists, return 403
+  If user name already exists, return 403
   If registering fails, return 500
   If registering succeeds, return 201 and set location-field to refer to the newly created user.
   
 Changing user information
-  x
-  y
-  z
+  When changing the information of a registered user the information is sent in JSON.
+  If user doesn't exist, return 404
+  If client isn't logged in as the user that is being updated, return 403
+  If the new name is too long (over 30 characters), return 500
+  If user information is updated successfully, return 200
+  If changing user information failed, return 500
+
+Deleting a user
+  Doesn't remove the messages of an user but instead sets user as "inactive" which prevents logging in.
+  If user doesn't exist, return 404
+  If client isn't logged in as the user that is being deleted, return 403
+  If user was deleted successfully, return 200
+  If deleting the user failed, return 500
