@@ -150,7 +150,7 @@ exports.register_user = function(req, res) {
 	  user.active = true; // Make user active (not deleted)
 	  if (msg) {
 	    res.render('register', { title: 'Register to Kamula',  message : msg, username:name });
-	  }
+	  } else {
       user.save(function (err, m) {
         if (!err) {
 		  console.error(err);
@@ -161,7 +161,7 @@ exports.register_user = function(req, res) {
 		  res.render('register', { title: 'Register to Kamula',  message : msg, username:name });
 		}
       });
-	  
+	  }
 	} else if(!err) {
 	  msg = 'Username exists';
 	  console.error(msg);

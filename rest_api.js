@@ -42,7 +42,7 @@ function api_register_user(req, res) {
 	  
       if (!req.body.email) {
 	    msg = msg + 'Bad email! ';
-	  }	  
+	  }
 	  user.email = req.body.email;
 	  
 	  if (req.body.password) {
@@ -52,17 +52,17 @@ function api_register_user(req, res) {
 	  user.active = true; // Make user active (not deleted)
 	  if (msg) {
 	    res.json(400, { message : msg});
-	  }
+	  } else {
       user.save(function (err, m) {
         if (!err) {
-		  console.error(err);
-		  res.setHeader('Location', '/api/users/'+req.body.user);
-		  res.json(201,{message: 'New user ' + user.user + ' registered'});
-		} else {
-		  res.json(500,{message: 'Problem with registering new user'});
-		}
+          console.error(err);
+          res.setHeader('Location', '/api/users/'+req.body.user);
+          res.json(201,{message: 'New user ' + user.user + ' registered'});
+        } else {
+          res.json(500,{message: 'Problem with registering new user'});
+        }
       });
-	  
+	  }
 	} else if(!err) {
 	  res.json(403, {message : 'Username exists!'});
 	} else {
@@ -92,7 +92,7 @@ function api_change_user(req, res) {
 		} else {
 		  var length = 30;
 		  if (!funcs.check_string_length(req.body.name, length)) {
-			res.json(500, {message: 'Too long name.'});
+			res.json(400, {message: 'Too long name.'});
 		  }
 		  user.name = req.body.name;
 		  user.email = req.body.email;
@@ -156,37 +156,40 @@ POST /api/users/:name {name : "Petteri", email : "asd@asd.asd", password : "aaa"
 function api_add_message(req, res){
   console.log(req.body.message);
   console.log(JSON.stringify(req.body));
-
+  
   var data = req.body;
   var message = new Message();
-  message.message = data.message;
-  message.type = data.type;
-  message.parent = data.parent;
-  //message.time = Date,
-  if (data.type == "update")
-    message.toWhom = req.user;
-  else if (data.type == "comment")
-    message.toWhom = data.toWhom;
-  message.fromWhom = req.user;
-  
-  message.save(function (err, m) {
-    if (err) return console.error(err);
-	
-	Message.findOne({_id : message._id}, function(err, docs) {
-		if(!err && docs) {
-		  console.log(docs);
-		  var r = docs.toObject();
-		  r.id = docs._id.toHexString(); // Not sure is this needed
-		  //r.time = r.time.toTimeString();
-		  res.json(200, r);
-		} else {
-		  res.json(500, {message: "error"});
-		}
+  if (!funcs.check_string_length(data.message, 200)) {
+    res.json(400, {message : "Invalid message length!"});
+  } else {
+    message.message = data.message;
+    message.type = data.type;
+    message.parent = data.parent;
+    //message.time = Date,
+    if (data.type == "update")
+      message.toWhom = req.user;
+    else if (data.type == "comment")
+      message.toWhom = data.toWhom;
+    message.fromWhom = req.user;
+    
+    message.save(function (err, m) { 
+      if (err) return console.error(err);
+      // Return created message as JSON
+      Message.findOne({_id : message._id}, function(err, docs) {
+      if(!err && docs) {
+        console.log(docs);
+        var r = docs.toObject();
+        r.id = docs._id.toHexString(); // Not sure is this needed
+        //r.time = r.time.toTimeString();
+        res.json(201, r);
+      } else {
+        res.json(500, {message: "error"});
+      }
 
-	  });
-	
-  });
-  
+      });
+    
+    });
+  }
 }
   
  // curl localhost:3000/api/users
@@ -196,12 +199,10 @@ GET /api/users/
 function api_get_users(req, res) {
   User.find({}, '-password', function(err, users) {
     if (!err && users) {
-	  res.send(201, users);
+	  res.send(200, users);
 	} else {
 	  res.send(500, {message : "Error"});
 	} 
-
-	
   });
 }
 
@@ -214,13 +215,17 @@ function api_get_user(req, res) {
     if (!err && users) {
 	  console.log(users);
 	  res.json(200, users);
-	} else
+	} else if (!users) {
 		//res.status(404).send(JSON.stringify({message : 'User ' + user + ' not found'}))
 		res.json(404, {message : 'User ' + user + ' not found'});
+  } else {
+    res.json(500, {message : "Error"});
+  }
   });
 }
 /*
-POST /messages/users/:name 
+Gets user's all updates.
+GET /messages/users/:name 
 {
     message : String,
 	type : String,  // "update" or "comment"
@@ -233,7 +238,7 @@ POST /messages/users/:name
 function api_get_user_messages(req, res) {
 
   Message.find({type : 'update', fromWhom : req.param('name')}).sort({time:-1}).exec(function(err, messages) {
-	if(!err && messages) {
+	if(!err) {
 		var m = new Array();
 
 		for (var i = 0; i < messages.length; i++) {
@@ -243,15 +248,16 @@ function api_get_user_messages(req, res) {
 		}
 		res.json(200, m);
 	} else {
-		res.json(404, {message : "Couldn't get updates for user " + req.param('name')});
+		res.json(500, {message : "Error while getting user " + req.param('name') + " messages."});
 	}
   });
 }
 
+/* Gets 5 newest user updates. */
 function api_get_newest_messages(req, res) {
 
   Message.find({type : 'update'}).sort({time:-1}).limit(5).exec(function(err, messages) {
-	if(!err && messages) {
+	if(!err) {
 		var m = new Array();
 
 		for (var i = 0; i < messages.length; i++) {
@@ -261,11 +267,12 @@ function api_get_newest_messages(req, res) {
 		}
 		res.json(200, m);
 	} else {
-		res.json(404, {message : "Couldn't get newest updates" });
+		res.json(500, {message : "Error while getting newest updates" });
 	}
   });
 }
 
+/* Gets 5 newest updates from authenticated user's friends. */
 function api_get_newest_friend_messages(req, res) {
   var username = req.user;
   if (username !== req.param('name')) {
@@ -277,7 +284,7 @@ function api_get_newest_friend_messages(req, res) {
 		console.log(user.friends);
 		  
 		Message.find({type : 'update', fromWhom : {$in : user.friends}}).sort({time:-1}).limit(5).exec(function(err, messages) {
-			if(!err && messages) {
+			if(!err) {
 				var m = new Array();
 
 				for (var i = 0; i < messages.length; i++) {
@@ -287,16 +294,13 @@ function api_get_newest_friend_messages(req, res) {
 				}
 				res.json(200, m);
 			} else {
-				res.json(404, {message : "Couldn't get friend updates for user " + req.param('name')});
+				res.json(500, {message : "Error while getting friend updates for user " + req.param('name')});
 			}
 		});
 		  
 	} else
 		res.json(404, {message : 'User ' + username + ' not found'});
   });
-  
-  
-
 }
 
 
@@ -340,7 +344,7 @@ module.exports = function(authMiddleware) {
   });
 
   app.post('/messages/users/:name', authMiddleware, api_add_message);
-  app.post('/users/', authMiddleware, api_register_user);
+  app.post('/users/', api_register_user);
   app.get('/updates/users/:name', api_get_user_messages);
   app.get('/updates/users/:name/friends', authMiddleware, api_get_newest_friend_messages);
   app.get('/updates/users/', api_get_newest_messages);
@@ -350,12 +354,7 @@ module.exports = function(authMiddleware) {
   app.get('/users/:name', api_get_user);
   app.put('/users/:name', authMiddleware, api_change_user);
   app.delete('/users/:name', authMiddleware, api_delete_user);
-  /*
-  app.post('/heroes', heroesPost);
-  app.get('/heroes/:heroid', heroGet);
-  app.put('/heroes/:heroid', authMiddleware, heroPut);
-  app.delete('/heroes/:heroid', authMiddleware, heroDelete);
-  */
+
   return app;
 };
 
