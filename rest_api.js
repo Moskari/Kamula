@@ -162,33 +162,53 @@ function api_add_message(req, res){
   if (!funcs.check_string_length(data.message, 200)) {
     res.json(400, {message : "Invalid message length!"});
   } else {
+
     message.message = data.message;
     message.type = data.type;
     message.parent = data.parent;
-    //message.time = Date,
-    if (data.type == "update")
-      message.toWhom = req.user;
-    else if (data.type == "comment")
-      message.toWhom = data.toWhom;
-    message.fromWhom = req.user;
-    
-    message.save(function (err, m) { 
-      if (err) return console.error(err);
-      // Return created message as JSON
-      Message.findOne({_id : message._id}, function(err, docs) {
-      if(!err && docs) {
-        console.log(docs);
-        var r = docs.toObject();
-        r.id = docs._id.toHexString(); // Not sure is this needed
-        //r.time = r.time.toTimeString();
-        res.json(201, r);
-      } else {
-        res.json(500, {message: "error"});
-      }
+	
+	// Find the user's friends and check that receiver is a friend
+	User.findOne({user : req.user}, 'friends', function(err, user) {
+		if(!err && user) {
+			// Check that the sender is receiver's friend or sender is sending himself a message (when message type is update)
+			if (req.user == data.toWhom || user.friends.indexOf(data.toWhom) >= 0) {
+				if (data.type == "update")
+					message.toWhom = req.user;
+				else if (data.type == "comment")
+					message.toWhom = data.toWhom;
+				if (data.type == "comment" || data.type == "update") {
+				message.fromWhom = req.user;
+				
+				// Save received message
+				message.save(function (err, m) { 
+				  if (err) return console.error(err);
+				  // Return created message as JSON
+				  Message.findOne({_id : message._id}, function(err, docs) {
+				  if(!err && docs) {
+					console.log(docs);
+					var r = docs.toObject();
+					r.id = docs._id.toHexString(); // Not sure is this needed
+					//r.time = r.time.toTimeString();
+					res.json(201, r);
+				  } else {
+					res.json(500, {message: "error"});
+				  }
 
-      });
-    
-    });
+				  });
+				});
+				} else {
+					res.json(400, {message: "Invalid message type!"});
+				}
+			} else {
+			  res.json(403, {message: "You don't have the rights to do that!"});
+			}
+		} else {
+			res.json(500, {message: "error"});
+		}
+	});
+	
+	
+
   }
 }
   
@@ -205,6 +225,7 @@ function api_get_users(req, res) {
 	} 
   });
 }
+
 
 /*
 GET /api/users/:name
@@ -223,6 +244,8 @@ function api_get_user(req, res) {
   }
   });
 }
+
+
 /*
 Gets user's all updates.
 GET /messages/users/:name 
@@ -253,6 +276,7 @@ function api_get_user_messages(req, res) {
   });
 }
 
+
 /* Gets 5 newest user updates. */
 function api_get_newest_messages(req, res) {
 
@@ -271,6 +295,7 @@ function api_get_newest_messages(req, res) {
 	}
   });
 }
+
 
 /* Gets 5 newest updates from authenticated user's friends. */
 function api_get_newest_friend_messages(req, res) {
@@ -302,7 +327,6 @@ function api_get_newest_friend_messages(req, res) {
 		res.json(404, {message : 'User ' + username + ' not found'});
   });
 }
-
 
 
 /*
