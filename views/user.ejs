@@ -28,6 +28,7 @@
         
     });
 
+	// Hides comment forms and makes reply buttons to show them again.
 	$(function() {
 		$('.commentform').hide();
 		$(document).on('click', '.toggle', function(e) {
@@ -35,9 +36,9 @@
 			$('#'+$(this).attr('section')).slideToggle('fast');
 			return false;
 		});
-		//$('#about').show();
 	});
 
+	// Gets all the updates
 	function get_updates() {
 		$('#messages').html(''); // Remove everything
 		$.ajax({
@@ -47,14 +48,18 @@
 					//data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
 				  }).done(function(data) {
 					for (var i = 0; i < data.length; i++) {
-						$("#messages").append(new_message(data[i].message, data[i].id, data[i].fromWhom, data[i].time));
-						$("#commentform_"+data[i].id).hide();
+						$("#messages").append(new_message(data[i].message, data[i].id, data[i].fromWhom, data[i].time)); // Show received message without refreshing
+						$("#commentform_"+data[i].id).hide(); // Hide the comment forms
 						get_comments(data[i].id);
 					}
 					
 				  });
 	}
 	
+	/* 
+	Gets comments for every message and comments of comments recursively and 
+	keeps doing that until there are no more any kind of messages left. 
+	*/
 	function get_comments(parent_id) {
 		$.ajax({
 					type: "GET",
@@ -71,8 +76,9 @@
 				  });
 	}
 	
+	/* HTML div template for a new message to be added */
 	function new_message(message, id, fromWhom, time) {
-		/*
+		/* // Not used
 		var data = messages[i];
 		var minutes = data.time.getMinutes();
 		var hour = data.time.getHours();
@@ -98,8 +104,11 @@
 		"</div>"; 
 	
 	}
-	
-	
+
+	/*
+	Sends a written message to server and once done, 
+	it retrieves all messages again from server and hides comment forms. 
+	*/
 	function post_message(msgfield, messages_div, type, parent) {
 		$.ajax({
 				type: "POST",
@@ -112,6 +121,7 @@
 			  });
 		}
 	
+	/* Makes generated comment forms submit buttons to work. */
 	$(function() {
 	    
         $(document).on('click', '.commentsubmit[type=submit]', function(e) {
@@ -122,12 +132,6 @@
         });
     });
 	
-	//$(".commentsubmit").click(function(event){
-     //event.preventDefault();
-    // var id = this.id;
-	 // Submit 
-	// post_message('#msgfield' + '_' + id,'#message' + '_' + id);
-    //});
     </script>
         
     

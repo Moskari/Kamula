@@ -4,6 +4,7 @@
  * Date: 12.4.2014
  */
 
+/* Schema for message sent by user. */
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;

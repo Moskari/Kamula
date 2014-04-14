@@ -4,6 +4,7 @@
  * Date: 12.4.2014
  */
 
+ /* Index page of login screen. */
 exports.index = function(req, res){
   var name = req.user;
   res.render('register', { title: 'Register to Kamula', message : '', username:name });

@@ -1,7 +1,7 @@
 /* 
  * TIE-23500 Web-ohjelmointi, Kamula-harjoitustyo
  * Authors: Samuli Rahkonen, Pekka Pennanen
- * Date: 12.4.2014
+ * Date: 14.4.2014
  */
 
 var express = require('express');
@@ -21,7 +21,7 @@ var uri = 'mongodb://localhost/kamula';
 mongoose.connect(uri);
 // Login-/autentikointikamaa
 
-// Everything to do with authentiction is in another file
+// Everything to do with authentication is in another file
 var authentication = require('./authentication');
 var passport = authentication.passport;
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
@@ -54,7 +54,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-var restApi = require('./rest_api.js');
+var restApi = require('./rest_api.js'); // Rest api is in separate file
 app.use('/api/', restApi(authentication.check_api_authentication))
 
 // Handlers for different web page requests
@@ -67,8 +67,8 @@ app.get('/register', register.index);
 app.get('/logout', authentication.logout);
 app.get('/users', users.list);
 app.get('/users/:name', users.show_user);
-app.post('/add_friend/:name', ensureLoggedIn('/login'), users.add_friend);
-app.get('/settings', ensureLoggedIn('/login'), settings.show_settings);
+app.post('/add_friend/:name', ensureLoggedIn('/login'), users.add_friend); // Adding friend requires log in
+app.get('/settings', ensureLoggedIn('/login'), settings.show_settings); // Showing user settings requires logging in.
 
 
 http.createServer(app).listen(app.get('port'), function(){

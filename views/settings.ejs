@@ -20,7 +20,7 @@
         
     });
 	
-	
+	/* Posts form data to server and shows received message. */
 	function post_user_data() {
 		$.ajax({
 			type: "PUT",
@@ -32,18 +32,15 @@
 		});
 	}
 	
-	
+	/* Gets data for logged in user and fills the form with the received data.  */
 	function get_logged_user_data() {
 		$.ajax({
 			type: "GET",
 			dataType: "json",
 			url: "/api/users/<%= username %>"
-			//data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
 		  }).done(function(data) {
 			$('input[name="name"]').val(data.name);
 			$('input[name="email"]').val(data.email);
-			//$('input[name="name"]').val(data.name);
-			//$('input[name="name"]').val(data.name);
 			
 		  });
 	
