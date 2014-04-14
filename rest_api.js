@@ -74,7 +74,6 @@ function api_register_user(req, res) {
 }
 
 
-
 /* 
 PUT /api/users/:name {name : "Petteri", email : "asd@asd.asd", password : "aaa"} 
 */
@@ -118,6 +117,7 @@ function api_change_user(req, res) {
   });
 }
 
+
 /* 
 DELETE /api/users/:name 
 */
@@ -151,6 +151,7 @@ function api_delete_user(req, res) {
 	});
   });
 }
+
 
 /* 
 POST /api/users/:name {name : "Petteri", email : "asd@asd.asd", password : "aaa"} 
@@ -208,11 +209,9 @@ function api_add_message(req, res){
 			res.json(500, {message: "error"});
 		}
 	});
-	
-	
-
   }
 }
+  
   
  // curl localhost:3000/api/users
 /*
@@ -250,7 +249,7 @@ function api_get_user(req, res) {
 
 /*
 Gets user's all updates.
-GET /messages/users/:name 
+GET /updates/users/:name 
 {
     message : String,
 	type : String,  // "update" or "comment"
@@ -344,16 +343,14 @@ function api_get_comments(req, res) {
 			r.id = messages[i]._id.toHexString();
 			m.push(r);
 		}
-		
-		
 		res.json(200, m);
-	} else {
+	} else if(err){
+    res.json(500, {message : "Error"});
+  }else{
 		res.json(404, {message : "Couldn't get comments for message " + req.param('msg_id')});
 	}
   });
 }
-
-
 
 var authentication_middleware;
 
