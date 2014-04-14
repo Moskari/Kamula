@@ -21,19 +21,21 @@ db.once('open', function() {
 
 
 /* 
-POST /api/users/ {user : "D4RT_V4D3R", name : "Petteri", email : "aaasd@asddd.asd", password : "111"} 
+POST /api/users/ {"user" : "D4RTV4D3R", "name" : "Petteri", "email" : "aaasd@asddd.asd", "password" : "111"} 
 */
+
+
 function api_register_user(req, res) {
   var msg = "";
   var user = new User();
-  
+  console.log(req);
   User.findOne({user : req.body.user}, function(err, docs) {
     if(!err && !docs) {
-	  console.log(docs);
-	  if (!funcs.check_string_chars(req.body.username) || !funcs.check_string_length(req.body.username, 99999)) {
+	  console.log(req.body);
+	  if (!funcs.check_string_chars(req.body.user) || !funcs.check_string_length(req.body.user, 99999)) {
 	    msg = 'Bad username! ';
 	  }
-	  user.user = req.body.username;
+	  user.user = req.body.user;
 	  
       if (!funcs.check_string_length(req.body.name, 30)) {
 	    msg = msg + 'Bad name! ';
@@ -45,7 +47,7 @@ function api_register_user(req, res) {
 	  }
 	  user.email = req.body.email;
 	  
-	  if (req.body.password) {
+	  if (!req.body.password) {
 		msg = msg + 'Bad password! ';
 	  }
 	  user.password = req.body.password;
@@ -75,7 +77,7 @@ function api_register_user(req, res) {
 
 
 /* 
-PUT /api/users/:name {name : "Petteri", email : "asd@asd.asd", password : "aaa"} 
+PUT /api/users/:name {"name" : "Petteri", "email" : "aaasd@asddd.asd", "password" : "111"} 
 */
 function api_change_user(req, res) {
   var username = req.param('name');
@@ -359,7 +361,7 @@ var authentication_middleware;
 module.exports = function(authMiddleware) {
   authentication_middleware = authMiddleware;
   var app = express();
-
+  
   // Kaikki API:n vastaukset ovat json-tyyppiä
   app.use(function(req, res, next) {
     res.type('application/json; charset=utf-8');
