@@ -124,9 +124,9 @@ exports.register_user = function(req, res) {
   var msg = '';
   var user = new User();
   var name = req.user;
-  User.findOne({user : req.body.user}, function(err, docs) {
+  console.log(req.body.username);
+  User.findOne({user : req.body.username}, function(err, docs) {
     if(!err && !docs) {
-	  console.log(docs);
 	  
 	  if (!funcs.check_string_chars(req.body.username) || !funcs.check_string_length(req.body.username, 99999)) {
 	    msg = 'Bad username! ';
@@ -162,7 +162,7 @@ exports.register_user = function(req, res) {
 		}
       });
 	  }
-	} else if(!err) {
+	} else if(docs) {
 	  msg = 'Username exists';
 	  console.error(msg);
 	  
