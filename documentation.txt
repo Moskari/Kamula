@@ -1,13 +1,67 @@
-POST    /api/messages/users/:name         Adds a new message for an user, Requires authentication.
+POST    /api/messages/users/:name         Adds a new message (update or comment) for an user, Requires authentication. Returns the new message in JSON.
 POST    /api/users/                       Adds a new user, user info in JSON form.
-GET     /api/updates/users/:name          Gets the messages of a specific user, returned in JSON.
-GET     /api/updates/users/:name/friends  Gets the 5 newest messages of a user's friends, returned in JSON. Requires authentication.
-GET     /api/updates/users/               Gets 5 newest messages of all users, messages returned in JSON.
+GET     /api/updates/users/:name          Gets the updates of a specific user, returned in JSON.
+GET     /api/updates/users/:name/friends  Gets the 5 newest updates of a user's friends, returned in JSON. Requires authentication.
+GET     /api/updates/users/               Gets 5 newest updates of all users, updates returned in JSON.
 GET     /api/comments/:msg_id             Gets comments for a message that has "msg_id" as id, returned in JSON.
 GET     /api/users                        Gets users, all users returned in JSON.
 GET     /api/users/:name                  Gets info of a user, user is returned in JSON.
 PUT     /api/users/:name                  Updates the info of a user, info in JSON form. Requires authentication.
 DELETE  /api/users/:name                  Deletes a user. Requires authentication.
+
+User information for registering a new user is in JSON the following
+{
+  "user": "jeejee",
+  "name": "aaaaaaaa",
+  "email": "jeejee@jj",
+  "password": "1111"
+}
+
+An existing user's information is in JSON the following
+{ 
+  message
+  "__v": 0,
+  "_id": "5349cc8566c06a780ffa7c85",
+  "active": true,
+  "email": "teemu@tut.fi",
+  "name": "Teemu Teekkari",
+  "user": "Teemu",
+  "friends": [
+    "Pekka",
+    "Monni"
+  ]
+}
+ 
+Update is in JSON the following
+{
+  "fromWhom": "Monni",
+  "toWhom": "Monni",
+  "parent": "",
+  "type": "update",
+  "message": "moi",
+  "_id": "534ad021e9e92c040514e4d7",
+  "__v": 0,
+  "time": "2014-04-13T17:57:53.855Z",
+  "id": "534ad021e9e92c040514e4d7"
+}
+
+Comment to a message is in JSON the following
+{
+  "fromWhom": "Pekka",
+  "toWhom": "Pekka",
+  "parent": "5349dd8166c06a780ffa7c8a",
+  "type": "comment",
+  "message": "hohoho",
+  "_id": "534c576a4fb8d8e4174a3bcb",
+  "__v": 0,
+  "time": "2014-04-14T21:47:22.589Z",
+  "id": "534c576a4fb8d8e4174a3bcb"
+}
+
+api responses are in the following form in JSON
+{
+  "message": "New user jeejee registered"
+}
 
 
 Registering a new user
@@ -27,21 +81,21 @@ Changing user information
   If changing user information failed, return 500
 
 Deleting a user
-  Doesn't remove the messages of an user but instead sets user as "inactive" which prevents logging in.
+  Doesn't remove the updates of an user but instead sets user as "inactive" which prevents logging in.
   If user doesn't exist, return 404
   If client isn't logged in as the user that is being deleted, return 403
   If user was deleted successfully, return 200
   If deleting the user failed, return 500
   
-Adding a message
-  Adds a new message into the user's page or user's friend's page in JSON.
-  If message is too long (>200), return 400
-  If adding a message is successful, return 201
+Adding an update
+  Adds a new update into the user's page or user's friend's page in JSON.
+  If update is too long (>200), return 400
+  If adding an update is successful, return 201
   If an error occurs while searching for the target user, return 500
-  If message is of an invalid type (not a comment or update), return 400
-  If client doesn't have rights to post a comment (target on himself or friend), return 403
-  If an error occurs while adding the message, return 500
-  
+  If update is of an invalid type (not a comment or update), return 400
+  If client doesn't have rights to post a update (target on himself or friend), return 403
+  If an error occurs while adding the update, return 500
+
 Getting the users of Kamula
   Finds the users and returns them in JSON without the password
   If users were found successfully, return 200
@@ -53,25 +107,25 @@ Getting a certain user
   If user was not found, return 404
   If an error occurred, return 500
   
-Getting the messages of a user
-  When messages are returned, they're in JSON
-  If messages are found successfully, return 200
+Getting the updates of a user
+  When updates are returned, they're in JSON
+  If updates are found successfully, return 200
   If an error occurred, return 500
   
-Getting five latest user messages
-  Returns five (or less if there's less than five messages) messages in JSON
-  If messages are found successfully, return 200
+Getting five latest user updates
+  Returns five (or less if there's less than five updates) updates in JSON
+  If updates are found successfully, return 200
   If an error occurred, return 500
   
-Getting five latest messages of the friends of a user
-  Returns five (or less if there's less than five messages) messages in JSON
+Getting five latest updates of the friends of a user
+  Returns five (or less if there's less than five updates) updates in JSON
   If client isn't logged in as the user, return 403
-  If messages are found successfully, return 200
+  If updates are found successfully, return 200
   If an error occurred, return 500
   If user isn't found, return 404
   
-Getting comments for a message
-  Returns comments for a message id in JSON
+Getting comments for an update
+  Returns comments for an update id in JSON
   If comments are returned successfully, return 200
   If an error occurred, return 500
   If comments are not found, return 404
