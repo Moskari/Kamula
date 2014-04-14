@@ -1,6 +1,6 @@
 {
   "name": "Kamula",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node app.js"
@@ -13,5 +13,17 @@
     "passport": "0.2.0",
     "passport-http": "0.2.2",
     "passport-local": "0.1.6"
-  }
+  },
+  "description": "Työ testattu Node.js:n versiolla 0.10.22",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:Moskari/kamula.git"
+  },
+  "author": "Samuli Rahkonen, Pekka Pennanen",
+  "license": "ISC"
 }
