@@ -45,10 +45,10 @@ Update is in JSON the following
   "id": "534ad021e9e92c040514e4d7"
 }
 
-Comment to a message is in JSON the following
+Comment to an update or comment to a comment is in JSON the following
 {
   "fromWhom": "Pekka",
-  "toWhom": "Pekka",
+  "toWhom": "Pate",
   "parent": "5349dd8166c06a780ffa7c8a",
   "type": "comment",
   "message": "hohoho",
