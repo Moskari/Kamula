@@ -46,8 +46,10 @@ function api_register_user(req, res) {
 	  user.email = req.body.email;
 	  
 	  if (req.body.password) {
-		user.password = req.body.password;
+		msg = msg + 'Bad password! ';
 	  }
+	  user.password = req.body.password;
+	  
 	  user.friends = new Array();
 	  user.active = true; // Make user active (not deleted)
 	  if (msg) {
