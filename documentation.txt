@@ -1,3 +1,6 @@
+Rest API Documentation for Kamula
+=================================
+
 POST    /api/messages/users/:name         Adds a new message (update or comment) for an user, Requires authentication. Returns the new message in JSON.
 POST    /api/users/                       Adds a new user, user info in JSON form.
 GET     /api/updates/users/:name          Gets the updates of a specific user, returned in JSON.
@@ -9,15 +12,24 @@ GET     /api/users/:name                  Gets info of a user, user is returned 
 PUT     /api/users/:name                  Updates the info of a user, info in JSON form. Requires authentication.
 DELETE  /api/users/:name                  Deletes a user. Requires authentication.
 
-User information for registering a new user is in JSON the following
+User information sent to the server for registering a new user is in JSON the following
 {
   "user": "jeejee",
-  "name": "aaaaaaaa",
+  "name": "Matti Nykänen",
   "email": "jeejee@jj",
-  "password": "1111"
+  "password": "jeesukset"
 }
 
-An existing user's information is in JSON the following
+
+User information sent to the server for changing user data is in JSON the following
+{
+  "name": "Matti Nykänen",
+  "email": "jeejee@jj",
+  "password": "jee sain sukset"
+}
+
+
+An existing user's information received from the server in JSON is the following
 { 
   message
   "__v": 0,
@@ -32,7 +44,7 @@ An existing user's information is in JSON the following
   ]
 }
  
-Update is in JSON the following
+Update received from the server  is in JSON the following
 {
   "fromWhom": "Monni",
   "toWhom": "Monni",
@@ -45,7 +57,15 @@ Update is in JSON the following
   "id": "534ad021e9e92c040514e4d7"
 }
 
-Comment to an update or comment to a comment is in JSON the following
+Update sent to the server is in JSON the following
+{
+  "message" : "Tuho tulee!",
+  "parent" : "",
+  "type" : "update"
+}
+
+
+Comment to an update or comment to a comment received from the server is in JSON the following
 {
   "fromWhom": "Pekka",
   "toWhom": "Pate",
@@ -58,7 +78,16 @@ Comment to an update or comment to a comment is in JSON the following
   "id": "534c576a4fb8d8e4174a3bcb"
 }
 
-api responses are in the following form in JSON
+
+Comment sent to the server  is in JSON the following
+{
+  "message" : "Muhahaa!",
+  "parent" : "534d3862dabc6604035b9d0c",
+  "type" : "comment"
+}
+
+
+api responses without any actual data (all error messages also) are in the following form in JSON
 {
   "message": "New user jeejee registered"
 }
