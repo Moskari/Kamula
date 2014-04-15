@@ -56,7 +56,17 @@ exports.show_user = function(req, res){
   if (logged_user === name)
     update_access = true;
   
-  res.render('user', {title:name, username : logged_user, post_url:'/api/messages/users/', update_access:update_access});
+  User.findOne({user : name}, 'friends', function(e, user) {
+	if (!e && user) {
+		res.render('user', {title:name, username : logged_user, post_url:'/api/messages/users/', update_access:update_access});
+	} else {
+		res.render('user', {title:"User not found", username : logged_user, post_url:'/api/messages/users/', update_access:update_access});
+	}
+  
+  });
+  
+  
+  
 };
 
 /* POST method that adds user a friend and then adds user as a friend's friend. */
