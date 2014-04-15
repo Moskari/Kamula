@@ -23,8 +23,6 @@ db.once('open', function() {
 /* 
 POST /api/users/ {"user" : "D4RTV4D3R", "name" : "Petteri", "email" : "aaasd@asddd.asd", "password" : "111"} 
 */
-
-
 function api_register_user(req, res) {
   var msg = "";
   var user = new User();
@@ -172,45 +170,68 @@ function api_add_message(req, res){
     message.type = data.type;
     message.parent = data.parent;
 	
-	// Find the user's friends and check that receiver is a friend
-	User.findOne({user : req.user}, 'friends', function(err, user) {
-		if(!err && user) {
-			// Check that the sender is receiver's friend or sender is sending himself a message (when message type is update)
-			if (req.user == data.toWhom || user.friends.indexOf(data.toWhom) >= 0) {
-				if (data.type == "update")
-					message.toWhom = req.user;
-				else if (data.type == "comment")
-					message.toWhom = data.toWhom;
-				if (data.type == "comment" || data.type == "update") {
-				message.fromWhom = req.user;
-				
-				// Save received message
-				message.save(function (err, m) { 
-				  if (err) return console.error(err);
-				  // Return created message as JSON
-				  Message.findOne({_id : message._id}, function(err, docs) {
-				  if(!err && docs) {
-					console.log(docs);
-					var r = docs.toObject();
-					r.id = docs._id.toHexString(); // Not sure is this needed
-					//r.time = r.time.toTimeString();
-					res.json(201, r);
-				  } else {
-					res.json(500, {message: "error"});
-				  }
+	var toWhom = "";
+	
+	if (data.parent) {
+		parent_id = mongoose.Types.ObjectId(data.parent)
+	} else 
+		parent_id = null;
+	// Find who is the sender of the message to which we are adding comment
+	Message.findOne({_id : parent_id}, 'fromWhom', function(er, parent_msg) {
+		if(!er) {
+			if (parent_msg)
+				toWhom = parent_msg.fromWhom;
+			else
+				toWhom = req.user;
+			console.log(toWhom);
+			// Find the user's friends and check that receiver is a friend
+			User.findOne({user : req.user}, 'friends', function(err, user) {
+				if(!err && user) {
+					// Check that the sender is receiver's friend or sender is sending himself a message (when message type is update)
+					if (req.user == toWhom || user.friends.indexOf(toWhom) >= 0) {
+						if (data.type == "update")
+							message.toWhom = req.user;
+						else if (data.type == "comment")
+							message.toWhom = toWhom;
+						if (data.type == "comment" || data.type == "update") {
+							message.fromWhom = req.user;
+							
+							// Save received message
+							message.save(function (err, m) { 
+							  if (err) return console.error(err);
+							  // Return created message as JSON
+							  Message.findOne({_id : message._id}, function(err, docs) {
+							  if(!err && docs) {
+								console.log(docs);
+								var r = docs.toObject();
+								r.id = docs._id.toHexString(); // Not sure is this needed
+								//r.time = r.time.toTimeString();
+								res.json(201, r);
+							  } else {
+								res.json(500, {message: "error"});
+							  }
 
-				  });
-				});
+							  });
+							});
+						} else {
+							res.json(400, {message: "Invalid message type!"});
+						}
+					} else {
+					  res.json(403, {message: "You don't have the rights to do that!"});
+					}
 				} else {
-					res.json(400, {message: "Invalid message type!"});
+					res.json(500, {message: "error"});
 				}
-			} else {
-			  res.json(403, {message: "You don't have the rights to do that!"});
-			}
+			});
+		
+			
 		} else {
-			res.json(500, {message: "error"});
+			res.json(404, {message : "Can't find the message to which you are replying to"});
 		}
+	
+	
 	});
+
   }
 }
   

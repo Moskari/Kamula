@@ -114,7 +114,7 @@
 				type: "POST",
 				dataType: "json",
 				url: "<%= post_url %><%= title %>",
-				data: {message : $(msgfield).val(), type : type, parent : parent, toWhom : "<%= title %>"}
+				data: {message : $(msgfield).val(), type : type, parent : parent}
 			  }).done(function(data) {
 				get_updates();
 				$("#commentform_" + data.id).hide();
