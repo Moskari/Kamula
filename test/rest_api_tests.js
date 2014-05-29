@@ -1,37 +1,16 @@
+/* 
+ * TIE-23500 Web-ohjelmointi, Kamula-harjoitustyo
+ * Authors: Samuli Rahkonen, Pekka Pennanen
+ * Date: 12.4.2014
+ */
+
+/* Here are the REST api tests for Kamula */
+
 var assert = require("assert")
 
 var User = require('../models/user').User;
 var Message = require('../models/message').Message;
 var mongoose = require('mongoose');
-
-/*
-describe('Connection', function(){
-  var uri = 'mongodb://localhost/kamula';
-  mongoose.connect(uri);
-  var db = new Connection
-    , tobi = new User('tobi')
-    , loki = new User('loki')
-    , jane = new User('jane');
-
-  beforeEach(function(done){
-    mongoose.connection.db.dropDatabase();
-    db.clear(function(err){
-      if (err) return done(err);
-      db.save([tobi, loki, jane], done);
-    });
-  })
-
-  describe('#find()', function(){
-    it('respond with matching records', function(done){
-      db.find({ type: 'User' }, function(err, res){
-        if (err) return done(err);
-        res.should.have.length(3);
-        done();
-      })
-    })
-  })
-})
-*/
 
 
 var should = require('should');
@@ -48,38 +27,40 @@ describe('Requesting api', function() {
 		"email": "jeejee@jj",
 		"password": "jeesukset"
 	}
-	// within before() you can run all the operations that are needed to setup your tests. In this case
-	// I want to create a connection with the database, and when I'm done, I call done().
+	var profile2 = {
+		"user": "kayttaja",
+		"name": "Tero Testaaja",
+		"email": "a@a.a",
+		"password": "salasana"
+	}
+	
+	
 	before(function(done) {
-		// In our tests we use the test db
-		
 		mongoose.connect(uri);	
 		// Remove everything under 'users' collection
 		mongoose.connection.collections['users'].drop( function(err) { });
-		//mongoose.connection.db.dropDatabase();
-		//User.remove({}, function(err) {
-		//	console.log('User collection removed');
-		//	
-		//});
-		done();
+		
+		user = new User();
+		user.user = "kayttaja";
+		user.password = "salasana";
+		user.email = "a@a.a";
+		user.name = "Tero Testaaja";
+		user.friends = new Array();
+		user.active = true;
+		
+		user.save(function (err, m) { 
+			if (err) throw err; 
+			console.log(m);
+			done();
+		});
+		
 	});
-	// use describe to give a title to your test suite, in this case the tile is "Account"
-	// and then specify a function in which we are going to declare all the tests
-	// we want to run. Each test starts with the function it() and as a first argument
-	// we have to provide a meaningful title for it, whereas as the second argument we
-	// specify a function that takes a single parameter, "done", that we will use
-	// to specify when our test is completed, and that's what makes easy
-	// to perform async test!
+
 	describe('User', function() {
 		it('should return 201 when registering an user', function(done) {
-			// once we have specified the info we want to send to the server via POST verb,
-			// we need to actually perform the action on the resource, in this case we want to
-			// POST on /api/profiles and we want to send some info
-			// We do this using the request object, requiring supertest!
 			request(url)
-			.post('/api/users/ ')
+			.post('/api/users/')
 			.send(profile)
-			.expect('Content-Type', /json/)
 			.expect(201) //Status code
 			// end handles the response
 			.end(function(err, res) {
@@ -104,14 +85,26 @@ describe('Requesting api', function() {
 			});
 		});
 		
-		it('should return 200 and right data when asking user data', function(done) {
-			// once we have specified the info we want to send to the server via POST verb,
-			// we need to actually perform the action on the resource, in this case we want to
-			// POST on /api/profiles and we want to send some info
-			// We do this using the request object, requiring supertest!
+		
+		it('should return 404 when registering an user with invalid data', function(done) {
+			var p = { "user":"asd", "password" : "", "name": "Tero Testaaja", "email": "a@a.a"}
 			request(url)
-			.get('/api/users/jeejee')
-			.expect('Content-Type', /json/)
+			.post('/api/users/')
+			.send(p)
+			.expect(400) //Status code
+			// end handles the response
+			.end(function(err, res) {
+				if (err) {
+					throw err;
+				}
+				done();
+			});
+		});
+		
+		
+		it('should return 200 and right data when asking user data', function(done) {
+			request(url)
+			.get('/api/users/kayttaja')
 			.expect(200) //Status code
 			// end handles the response
 			.end(function(err, res) {
@@ -120,40 +113,45 @@ describe('Requesting api', function() {
 				}
 				// this is should.js syntax, very clear
 				//res.should.have.status(200);
-				res.body.user.should.equal(profile.user)
-				res.body.name.should.equal(profile.name)
-				res.body.email.should.equal(profile.email)
+				res.body.user.should.equal(profile2.user)
+				res.body.name.should.equal(profile2.name)
+				res.body.email.should.equal(profile2.email)
 				res.body.should.have.property('_id')
 				res.body.should.have.property('friends')
 				res.body.active.should.equal(true)
 				done();
-				
-				
 			});
 		});
-		/*
-		it('should correctly update an existing account', function(done){
-			var body = {
-				firstName: 'JP',
-				lastName: 'Berd'
-			};
+		
+		
+		it('should return 404 when asking non-existent user data', function(done) {
 			request(url)
-				.put('/api/profiles/vgheri')
-				.send(body)
-				.expect('Content-Type', /json/)
-				.expect(200) //Status code
-				.end(function(err,res) {
-					if (err) {
-						throw err;
-					}
-					// Should.js fluent syntax applied
-					res.body.should.have.property('_id');
-					res.body.firstName.should.equal('JP');
-					res.body.lastName.should.equal('Berd');
-					res.body.creationDate.should.not.equal(null);
-					done();
-				});
-		}); */
+			.get('/api/users/unknown')
+			.expect(404) //Status code
+			// end handles the response
+			.end(function(err, res) {
+				if (err) {
+					throw err;
+				}
+				done();
+			});
+		});
+		
+		
+		it('should return 403 when registering an existing user name', function(done) {
+			request(url)
+			.post('/api/users/')
+			.send(profile2)
+			.expect(403) //Status code
+			// end handles the response
+			.end(function(err, res) {
+				if (err) {
+					throw err;
+				}
+				done();
+			});
+		});
+		
 	});
 	
 	
