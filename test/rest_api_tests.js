@@ -86,12 +86,27 @@ describe('Requesting api', function() {
 		});
 		
 		
-		it('should return 404 when registering an user with invalid data', function(done) {
+		it('should return 400 when registering an user with invalid data', function(done) {
 			var p = { "user":"asd", "password" : "", "name": "Tero Testaaja", "email": "a@a.a"}
 			request(url)
 			.post('/api/users/')
 			.send(p)
 			.expect(400) //Status code
+			// end handles the response
+			.end(function(err, res) {
+				if (err) {
+					throw err;
+				}
+				done();
+			});
+		});
+		
+		
+		it('should return 403 when registering an existing user name', function(done) {
+			request(url)
+			.post('/api/users/')
+			.send(profile2)
+			.expect(403) //Status code
 			// end handles the response
 			.end(function(err, res) {
 				if (err) {
@@ -137,20 +152,6 @@ describe('Requesting api', function() {
 			});
 		});
 		
-		
-		it('should return 403 when registering an existing user name', function(done) {
-			request(url)
-			.post('/api/users/')
-			.send(profile2)
-			.expect(403) //Status code
-			// end handles the response
-			.end(function(err, res) {
-				if (err) {
-					throw err;
-				}
-				done();
-			});
-		});
 		
 	});
 	
