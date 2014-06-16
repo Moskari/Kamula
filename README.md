@@ -1,15 +1,17 @@
-# TIE-23500 Web-ohjelmointi harjoitustyö
+## About Kamula
 
-## Kamula
+Kamula is a project work for a web programming class. It is a web service for users to write updates and comments to each other's profile pages.
 
-## Ryhmän numero: 45
+Kamula is made using Node.js 0.10.22 and Mongodb.
 
-## Työn tekivät: Samuli Rahkonen ja Pekka Pennanen
+Repository has been imported from Bitbucket.
 
-Työ testattu Node.js:n versiolla 0.10.22
+## Installation
 
-Käynnistetty Kamula löytyy osoitteesta http://127.0.0.1:3000/
+To run Kamula locally you need to install Node.js and mongodb (default port 27017). 
 
-Käytetään MongoDB:n default porttia (27017), joten sen ei pitäisi vaatia säätämistä.
+Run npm install in root folder to install all dependencies using from package.json.
 
-Käytetään Mocha-testejä, eli sen asennus vaaditaan, jos halutaan ajaa testit. Testit ajetaan antamalla komento "mocha" kamulan juuressa.
+## Running
+
+Start mongodb and execute node app.js in command line. Kamula's url is http://127.0.0.1:3000/
